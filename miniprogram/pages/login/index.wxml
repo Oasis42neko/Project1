@@ -1,0 +1,9 @@
+<view class="login-page">
+  <view class="login-card panel">
+    <view class="brand-mark">山</view>
+    <view class="login-title">凤凰山森林健康</view>
+    <view class="login-desc">登录后可共享查看树木档案、录入样树数据并生成统计导出。</view>
+    <button class="primary-btn login-btn" loading="{{logging}}" bindtap="login">微信登录</button>
+    <view class="login-note">系统仅使用微信 openid 识别录入人员，不获取手机号。</view>
+  </view>
+</view>

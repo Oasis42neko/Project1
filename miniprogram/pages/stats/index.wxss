@@ -1,0 +1,111 @@
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+}
+
+.summary-card {
+  min-height: 148rpx;
+  padding: 28rpx;
+}
+
+.summary-value {
+  color: #07c160;
+  font-size: 44rpx;
+  font-weight: 600;
+}
+
+.summary-value.warn {
+  color: #ffc300;
+}
+
+.summary-label {
+  margin-top: 8rpx;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 26rpx;
+}
+
+.export-panel,
+.file-panel {
+  margin-top: 20rpx;
+  padding: 28rpx 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.export-title,
+.section-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #191919;
+}
+
+.export-subtitle,
+.file-id {
+  margin-top: 8rpx;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 24rpx;
+  word-break: break-all;
+}
+
+.export-btn,
+.download-btn {
+  width: 150rpx;
+  height: 72rpx;
+  padding: 0;
+  font-size: 28rpx;
+}
+
+.chart-section {
+  margin-top: 20rpx;
+  padding: 28rpx 32rpx;
+}
+
+.bar-row,
+.rank-row {
+  min-height: 80rpx;
+  display: grid;
+  grid-template-columns: 132rpx 1fr 64rpx;
+  align-items: center;
+  gap: 14rpx;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 26rpx;
+}
+
+.rank-row {
+  grid-template-columns: 1fr 80rpx;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.1);
+}
+
+.rank-row:last-child {
+  border-bottom: 0;
+}
+
+.bar-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.bar-track {
+  height: 16rpx;
+  border-radius: 999rpx;
+  background: #f2f2f2;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 16rpx;
+  min-width: 8rpx;
+  border-radius: 999rpx;
+  background: #07c160;
+}
+
+.bar-count,
+.rank-count {
+  color: #07c160;
+  font-weight: 600;
+  text-align: right;
+}

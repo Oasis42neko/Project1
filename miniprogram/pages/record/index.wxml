@@ -1,0 +1,32 @@
+<view class="safe-page record-page">
+  <view class="search-bar panel">
+    <input class="search-input" value="{{keyword}}" placeholder="搜索编号、树种、样方或记录人" bindinput="onKeywordInput" confirm-type="search" bindconfirm="onSearch" />
+    <button class="secondary-btn search-btn" bindtap="onSearch">搜索</button>
+  </view>
+
+  <button class="primary-btn create-btn" bindtap="goCreate">新增树木档案</button>
+
+  <view class="record-list" wx:if="{{records.length}}">
+    <view class="record-card panel" wx:for="{{records}}" wx:key="_id">
+      <view class="card-main" bindtap="editRecord" data-id="{{item._id}}">
+        <view class="card-top">
+          <view class="tree-title">{{item.treeNo}} · {{item.species}}</view>
+          <view class="badge">{{item.healthLevel}}</view>
+        </view>
+        <view class="meta-grid">
+          <view>样方：{{item.plotNo}}</view>
+          <view>胸径：{{item.dbh || '-'}} cm</view>
+          <view>树高：{{item.height || '-'}} m</view>
+          <view>复核：{{item.reviewStatus}}</view>
+        </view>
+        <view class="record-note muted">{{item.recordDate}} / {{item.recorder}}</view>
+      </view>
+      <view class="card-actions">
+        <button class="ghost-btn action-btn" bindtap="editRecord" data-id="{{item._id}}">编辑</button>
+        <button class="danger-btn action-btn" bindtap="deleteRecord" data-id="{{item._id}}">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="panel empty-state" wx:else>暂无匹配档案</view>
+</view>

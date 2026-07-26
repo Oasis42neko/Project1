@@ -1,0 +1,58 @@
+<view class="safe-page stats-page">
+  <view class="summary-grid">
+    <view class="summary-card panel">
+      <view class="summary-value">{{summary.total}}</view>
+      <view class="summary-label">树木档案</view>
+    </view>
+    <view class="summary-card panel">
+      <view class="summary-value">{{summary.plots}}</view>
+      <view class="summary-label">样方覆盖</view>
+    </view>
+    <view class="summary-card panel">
+      <view class="summary-value">{{summary.species}}</view>
+      <view class="summary-label">树种数量</view>
+    </view>
+    <view class="summary-card panel">
+      <view class="summary-value warn">{{summary.abnormal}}</view>
+      <view class="summary-label">异常样树</view>
+    </view>
+  </view>
+
+  <view class="panel export-panel">
+    <view>
+      <view class="export-title">数据移交导出</view>
+      <view class="export-subtitle">生成 CSV 文件，包含全部树木健康档案字段</view>
+    </view>
+    <button class="primary-btn export-btn" loading="{{exporting}}" bindtap="exportCsv">导出</button>
+  </view>
+
+  <view class="panel file-panel" wx:if="{{exportFileID}}">
+    <view class="file-id">{{exportFileID}}</view>
+    <button class="secondary-btn download-btn" bindtap="downloadExport">下载打开</button>
+  </view>
+
+  <view class="chart-section panel">
+    <view class="section-title">健康等级</view>
+    <view class="bar-row" wx:for="{{byHealth}}" wx:key="name">
+      <view class="bar-name">{{item.name}}</view>
+      <view class="bar-track"><view class="bar-fill" style="width: {{item.percent}}%;"></view></view>
+      <view class="bar-count">{{item.count}}</view>
+    </view>
+  </view>
+
+  <view class="chart-section panel">
+    <view class="section-title">样方数量</view>
+    <view class="rank-row" wx:for="{{byPlot}}" wx:key="name">
+      <view>{{item.name}}</view>
+      <view class="rank-count">{{item.count}}</view>
+    </view>
+  </view>
+
+  <view class="chart-section panel">
+    <view class="section-title">主要树种</view>
+    <view class="rank-row" wx:for="{{bySpecies}}" wx:key="name">
+      <view>{{item.name}}</view>
+      <view class="rank-count">{{item.count}}</view>
+    </view>
+  </view>
+</view>

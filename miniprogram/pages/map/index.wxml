@@ -1,0 +1,33 @@
+<view class="map-page">
+  <map
+    class="forest-map"
+    latitude="{{latitude}}"
+    longitude="{{longitude}}"
+    scale="{{scale}}"
+    markers="{{markers}}"
+    show-location
+    bindmarkertap="onMarkerTap"
+  ></map>
+
+  <view class="map-dock panel">
+    <view class="dock-head">
+      <view>
+        <view class="dock-title">样树分布</view>
+        <view class="dock-subtitle">已定位 {{markers.length}} 株 / 共 {{records.length}} 份档案</view>
+      </view>
+      <button class="secondary-btn mini" bindtap="goCreate">录入</button>
+    </view>
+
+    <view class="selected" wx:if="{{selected}}">
+      <view>
+        <view class="selected-title">{{selected.treeNo}} · {{selected.species}}</view>
+        <view class="selected-meta">{{selected.plotNo}} / {{selected.healthLevel}} / {{selected.recordDate}}</view>
+      </view>
+      <view class="selected-actions">
+        <button class="ghost-btn mini" bindtap="openSelectedLocation">导航</button>
+        <button class="primary-btn mini" bindtap="editSelected">查看</button>
+      </view>
+    </view>
+    <view class="muted map-tip" wx:else>点击地图标记查看样树摘要</view>
+  </view>
+</view>

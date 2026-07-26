@@ -1,0 +1,52 @@
+<view class="safe-page form-page">
+  <view class="panel location-card">
+    <view>
+      <view class="location-title">样树定位<text class="required">*</text></view>
+      <view class="location-meta">经度 {{form.longitude || '-'}} / 纬度 {{form.latitude || '-'}} / 海拔 {{form.altitude || '-' }} m</view>
+    </view>
+    <view class="location-actions">
+      <button class="secondary-btn locate-btn" bindtap="getLocation">定位</button>
+      <button class="ghost-btn locate-btn" bindtap="chooseLocation">选点</button>
+    </view>
+  </view>
+
+  <view class="form-section panel" wx:for="{{sections}}" wx:for-index="sectionIndex" wx:key="title">
+    <view class="section-title">{{item.title}}</view>
+    <view class="field" wx:for="{{item.fields}}" wx:for-item="field" wx:for-index="fieldIndex" wx:key="key">
+      <view class="field-label">
+        <text>{{field.label}}</text>
+        <text class="required" wx:if="{{field.required}}">*</text>
+      </view>
+
+      <input wx:if="{{field.type === 'text' || field.type === 'number' || field.type === 'digit'}}" class="field-input" type="{{field.type === 'text' ? 'text' : field.type}}" value="{{field.value}}" placeholder="{{field.placeholder || ('请输入' + field.label)}}" data-key="{{field.key}}" bindinput="onInput" />
+
+      <picker wx:elif="{{field.type === 'picker'}}" value="{{field.pickerIndex}}" range="{{field.options}}" data-section-index="{{sectionIndex}}" data-field-index="{{fieldIndex}}" bindchange="onPickerChange">
+        <view class="field-input picker-value">{{field.value || '请选择' + field.label}}</view>
+      </picker>
+
+      <picker wx:elif="{{field.type === 'date'}}" mode="date" value="{{field.value}}" data-key="{{field.key}}" bindchange="onDateChange">
+        <view class="field-input picker-value">{{field.value || '请选择日期'}}</view>
+      </picker>
+
+      <textarea wx:elif="{{field.type === 'textarea'}}" class="field-textarea" value="{{field.value}}" placeholder="{{field.placeholder}}" data-key="{{field.key}}" bindinput="onInput" />
+
+      <view class="unit" wx:if="{{field.unit}}">{{field.unit}}</view>
+    </view>
+  </view>
+
+  <view class="form-section panel">
+    <view class="section-headline">
+      <view class="section-title">现场照片<text class="required">*</text></view>
+      <button class="secondary-btn photo-btn" bindtap="chooseImages">添加照片</button>
+    </view>
+    <view class="photo-grid" wx:if="{{form.images.length}}">
+      <view class="photo-item" wx:for="{{form.images}}" wx:key="*this">
+        <image src="{{item}}" mode="aspectFill"></image>
+        <button class="remove-photo" bindtap="removeImage" data-index="{{index}}">×</button>
+      </view>
+    </view>
+    <view class="muted photo-empty" wx:else>请至少添加 1 张现场照片，最多 6 张</view>
+  </view>
+
+  <button class="primary-btn submit-btn" loading="{{saving}}" bindtap="submitForm">保存树木档案</button>
+</view>

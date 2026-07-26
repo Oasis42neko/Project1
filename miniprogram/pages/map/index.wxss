@@ -1,0 +1,59 @@
+.map-page {
+  min-height: 100vh;
+  position: relative;
+  background: #f7f7f7;
+}
+
+.forest-map {
+  width: 100vw;
+  height: 100vh;
+}
+
+.map-dock {
+  position: fixed;
+  left: 24rpx;
+  right: 24rpx;
+  bottom: 42rpx;
+  padding: 28rpx 32rpx;
+}
+
+.dock-head,
+.selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+}
+
+.dock-title,
+.selected-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #191919;
+}
+
+.dock-subtitle,
+.selected-meta,
+.map-tip {
+  margin-top: 8rpx;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 24rpx;
+}
+
+.selected {
+  margin-top: 24rpx;
+  padding-top: 22rpx;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.1);
+}
+
+.selected-actions {
+  display: flex;
+  gap: 12rpx;
+}
+
+.mini {
+  width: 116rpx;
+  height: 72rpx;
+  padding: 0;
+  font-size: 28rpx;
+}

@@ -1,0 +1,49 @@
+{
+  "pages": [
+    "pages/login/index",
+    "pages/index/index",
+    "pages/map/index",
+    "pages/record/index",
+    "pages/stats/index",
+    "pages/form/index"
+  ],
+  "window": {
+    "backgroundColor": "#F7F7F7",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F7F7F7",
+    "navigationBarTitleText": "凤凰山森林健康",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#647064",
+    "selectedColor": "#1D7A4D",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/map/index",
+        "text": "地图"
+      },
+      {
+        "pagePath": "pages/record/index",
+        "text": "档案"
+      },
+      {
+        "pagePath": "pages/stats/index",
+        "text": "统计"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于记录样树位置并在地图中展示样方数据"
+    }
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}
