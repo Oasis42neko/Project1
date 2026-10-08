@@ -1,0 +1,67 @@
+<view class="safe-page users-page">
+  <view class="panel intro-panel">
+    <view class="intro-title">用户权限</view>
+    <view class="intro-desc">管理员可查看成员在线位置、调整角色、管理手动定位开关；普通用户只上报自己位置，不能查看其他人。</view>
+  </view>
+
+  <view class="panel setting-panel">
+    <view class="setting-main">
+      <view>
+        <view class="setting-title">允许手动定位</view>
+        <view class="setting-desc">关闭后，普通用户不能手填经纬度、地图选点或填入样方中心。</view>
+      </view>
+      <switch checked="{{settings.allowManualLocation}}" color="#07C160" bindchange="toggleManualLocation" />
+    </view>
+  </view>
+
+  <view class="panel location-panel">
+    <view class="section-headline">
+      <view>
+        <view class="section-title">成员实时位置</view>
+        <view class="section-desc">在线状态以 5 分钟内最近一次上报为准</view>
+      </view>
+      <button class="ghost-btn refresh-btn" bindtap="loadLocations">刷新</button>
+    </view>
+    <map
+      class="member-map"
+      latitude="{{locationMap.latitude}}"
+      longitude="{{locationMap.longitude}}"
+      scale="{{locationMap.scale}}"
+      markers="{{locationMarkers}}"
+      wx:if="{{locationMarkers.length}}"
+    ></map>
+    <view class="empty-inline" wx:else>暂无成员位置上报</view>
+    <view class="location-list" wx:if="{{userLocations.length}}">
+      <view class="location-row" wx:for="{{userLocations}}" wx:key="openid">
+        <view class="status-dot {{item.isOnline ? 'online' : ''}}"></view>
+        <view class="location-info">
+          <view class="location-name">{{item.name}}<text class="role-text">{{item.roleText}}</text></view>
+          <view class="location-meta">{{item.coordText}} {{item.accuracyText}}</view>
+          <view class="location-meta">{{item.statusText}} ? {{item.updatedText}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="user-list" wx:if="{{users.length}}">
+    <view class="user-card panel" wx:for="{{users}}" wx:key="_id">
+      <view class="user-main">
+        <view class="user-avatar">{{item.role === 'admin' ? '管' : '普'}}</view>
+        <view class="user-info">
+          <view class="user-title">
+            <text>{{item.nickName || item.openidShort}}</text>
+            <text class="self-tag" wx:if="{{item.isCurrent}}">自己</text>
+          </view>
+          <view class="user-meta">{{item.openidShort}}</view>
+          <view class="user-meta">录入档案 {{item.recordCount}} 条</view>
+        </view>
+      </view>
+      <view class="user-actions">
+        <view class="role-badge {{item.role === 'admin' ? 'admin' : ''}}">{{item.roleText}}</view>
+        <button class="ghost-btn role-btn" bindtap="changeRole" data-id="{{item._id}}" data-role="{{item.nextRole}}" data-name="{{item.nickName || item.openidShort}}">{{item.actionText}}</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="panel empty-state" wx:else>暂无用户，用户登录后会自动出现在这里</view>
+</view>

@@ -1,73 +1,21 @@
 <view class="safe-page home-page">
-  <view class="hero">
-    <view>
-      <view class="hero-title">凤凰山森林健康</view>
-      <view class="hero-subtitle">20个固定样方 · 一树一档 · 公民科学观测</view>
-    </view>
-    <view class="hero-actions">
-      <button class="primary-btn" bindtap="goCreate">录入样树</button>
-      <button class="secondary-btn" bindtap="goMap">查看地图</button>
-    </view>
+  <view class="home-title-block">
+    <image class="home-calligraphy" src="/assets/home/home-calligraphy.png" mode="widthFix" />
   </view>
 
-  <view class="user-strip panel">
-    <view>
-      <view class="user-status">已登录</view>
-      <view class="user-meta">共享数据库 · 用户 {{userTag}}</view>
-    </view>
-    <button class="ghost-link" bindtap="logout">退出</button>
-  </view>
+  <swiper class="home-banner" indicator-dots autoplay circular interval="4200" duration="500">
+    <swiper-item wx:for="{{banners}}" wx:key="title">
+      <image class="banner-image" src="{{item.image}}" mode="aspectFill" lazy-load="{{true}}" />
+      <view class="banner-shade"></view>
+      <view class="banner-copy"><view class="banner-kicker">{{item.kicker}}</view><view class="banner-title">{{item.title}}</view><view class="banner-subtitle">{{item.subtitle}}</view></view>
+    </swiper-item>
+  </swiper>
 
-  <view class="metrics">
-    <view class="metric panel">
-      <view class="metric-value">{{stats.total}}</view>
-      <view class="metric-label">树木档案</view>
-    </view>
-    <view class="metric panel">
-      <view class="metric-value">{{stats.plots}}</view>
-      <view class="metric-label">已覆盖样方</view>
-    </view>
-    <view class="metric panel">
-      <view class="metric-value">{{stats.species}}</view>
-      <view class="metric-label">记录树种</view>
-    </view>
-    <view class="metric panel">
-      <view class="metric-value warn">{{stats.pendingReview}}</view>
-      <view class="metric-label">待复核</view>
+  <view class="module-list">
+    <view class="module-card" wx:for="{{modules}}" wx:key="key" bindtap="openModule" data-key="{{item.key}}">
+      <image class="module-image" src="{{item.image}}" mode="aspectFill" />
+      <view class="module-shade"></view>
+      <view class="module-content"><view class="module-number">{{item.number}}</view><view class="module-title">{{item.title}}</view><view class="module-link">进入板块 <text>→</text></view></view>
     </view>
   </view>
-
-  <view class="section-head">
-    <view>
-      <view class="section-title">健康概览</view>
-      <view class="section-subtitle">用于快速发现异常样树</view>
-    </view>
-    <button class="ghost-link" bindtap="goStats">统计</button>
-  </view>
-
-  <view class="health-grid">
-    <view class="health-item panel" wx:for="{{healthCards}}" wx:key="name">
-      <view class="health-name">{{item.name}}</view>
-      <view class="health-count">{{item.count}}</view>
-    </view>
-  </view>
-
-  <view class="section-head">
-    <view>
-      <view class="section-title">最近录入</view>
-      <view class="section-subtitle">现场数据提交后进入复核队列</view>
-    </view>
-    <button class="ghost-link" bindtap="goRecords">全部</button>
-  </view>
-
-  <view class="panel recent-panel" wx:if="{{recentRecords.length}}">
-    <view class="recent-row" wx:for="{{recentRecords}}" wx:key="_id">
-      <view>
-        <view class="recent-title">{{item.treeNo}} · {{item.species}}</view>
-        <view class="recent-meta">{{item.plotNo}} / {{item.recordDate}} / {{item.recorder}}</view>
-      </view>
-      <view class="badge">{{item.healthLevel}}</view>
-    </view>
-  </view>
-  <view class="panel empty-state" wx:else>暂无档案，先录入第一株样树</view>
 </view>

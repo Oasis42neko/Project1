@@ -1,4 +1,4 @@
-const authService = require("../../services/authService");
+﻿const authService = require("../../services/authService");
 
 Page({
   data: {
@@ -16,12 +16,12 @@ Page({
     wx.showLoading({ title: "登录中" });
     try {
       await authService.login();
-      wx.showToast({ title: "登录成功" });
+      wx.showToast({ title: "登录成功", icon: "success" });
       setTimeout(() => wx.switchTab({ url: "/pages/index/index" }), 300);
     } catch (error) {
       wx.showModal({
         title: "登录失败",
-        content: "请确认已开通云开发并部署 quickstartFunctions 云函数。",
+        content: "请确认已开通云开发，并部署 quickstartFunctions 云函数。",
         showCancel: false,
       });
     } finally {

@@ -1,80 +1,27 @@
-const treeService = require("../../services/treeService");
 const authService = require("../../services/authService");
 
 Page({
   data: {
-    loading: true,
-    user: null,
-    userTag: "",
-    stats: {
-      total: 0,
-      plots: 0,
-      species: 0,
-      pendingReview: 0,
-      abnormal: 0,
-    },
-    healthCards: [],
-    recentRecords: [],
+    banners: [
+      { image: "/assets/home/fenghuang-mountain.jpg", kicker: "凤凰山森林健康观测", title: "记录每一片森林的变化", subtitle: "从样方调查开始，建立森林健康档案" },
+      { image: "/assets/home/ancient-tree.jpg", kicker: "潮州古树名木健康观测", title: "让古树拥有自己的数字档案", subtitle: "逐株记录，长期追踪" },
+      { image: "/assets/home/forest-pest.jpg", kicker: "林业病虫害观测", title: "发现异常，及时上报", subtitle: "照片、位置和症状信息一并留存" },
+    ],
+    modules: [
+      { key: "forest", number: "01", title: "\u51e4\u51f0\u5c71\u68ee\u6797\n\u5065\u5eb7\u89c2\u6d4b", image: "/assets/home/fenghuang-mountain.jpg" },
+      { key: "ancient", number: "02", title: "\u53e4\u6811\u540d\u6728\n\u5065\u5eb7\u89c2\u6d4b", image: "/assets/home/ancient-tree.jpg" },
+      { key: "pest", number: "03", title: "\u6797\u4e1a\u75c5\u866b\n\u5bb3\u89c2\u6d4b", image: "/assets/home/forest-pest.jpg" },
+    ],
   },
 
   onShow() {
-    const user = authService.requireLogin();
-    if (!user) return;
-    this.setData({
-      user,
-      userTag: user.openid ? user.openid.slice(-6) : "",
-    });
-    this.loadDashboard();
+    authService.requireLogin();
   },
 
-  async loadDashboard() {
-    this.setData({ loading: true });
-    try {
-      await treeService.initProject();
-      const statsRes = await treeService.getStats();
-      const listRes = await treeService.listTrees({ limit: 5 });
-      this.setData({
-        stats: statsRes.data.summary,
-        healthCards: statsRes.data.byHealth,
-        recentRecords: listRes.data || [],
-      });
-    } catch (error) {
-      wx.showModal({
-        title: "云开发未就绪",
-        content: "请确认已开通微信云开发，并上传部署 quickstartFunctions 云函数。",
-        showCancel: false,
-      });
-    } finally {
-      this.setData({ loading: false });
-    }
-  },
-
-  logout() {
-    wx.showModal({
-      title: "退出登录",
-      content: "退出后需要重新登录才能查看和录入共享数据。",
-      confirmColor: "#FA5151",
-      success: (res) => {
-        if (!res.confirm) return;
-        authService.clearCachedUser();
-        wx.reLaunch({ url: "/pages/login/index" });
-      },
-    });
-  },
-
-  goCreate() {
-    wx.navigateTo({ url: "/pages/form/index" });
-  },
-
-  goMap() {
-    wx.switchTab({ url: "/pages/map/index" });
-  },
-
-  goRecords() {
-    wx.switchTab({ url: "/pages/record/index" });
-  },
-
-  goStats() {
-    wx.switchTab({ url: "/pages/stats/index" });
+  openModule(event) {
+    const key = event.currentTarget.dataset.key;
+    if (key === "forest") return wx.navigateTo({ url: "/pages/forest/index" });
+    if (key === "ancient") return wx.navigateTo({ url: "/pages/ancient/index" });
+    if (key === "pest") return wx.navigateTo({ url: "/pages/pest/index" });
   },
 });

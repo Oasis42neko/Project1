@@ -6,27 +6,38 @@
 
   <button class="primary-btn create-btn" bindtap="goCreate">新增树木档案</button>
 
+  <view class="record-summary muted">共 {{total}} 条，每页 {{pageSize}} 条</view>
+
   <view class="record-list" wx:if="{{records.length}}">
     <view class="record-card panel" wx:for="{{records}}" wx:key="_id">
       <view class="card-main" bindtap="editRecord" data-id="{{item._id}}">
-        <view class="card-top">
-          <view class="tree-title">{{item.treeNo}} · {{item.species}}</view>
-          <view class="badge">{{item.healthLevel}}</view>
+        <image wx:if="{{item.coverUrl}}" class="cover" src="{{item.coverUrl}}" mode="aspectFill"></image>
+        <view class="card-content">
+          <view class="card-top">
+            <view class="tree-title">{{item.treeNo}} · {{item.species}}</view>
+            <view class="badge">{{item.healthLevel}}</view>
+          </view>
+          <view class="meta-grid">
+            <view>样方：{{item.plotNo}}</view>
+            <view>胸径：{{item.dbh || '-'}} cm</view>
+            <view>树高：{{item.height || '-'}} m</view>
+            <view>复核：{{item.reviewStatus}}</view>
+          </view>
+          <view class="record-note muted">{{item.recordDate}} / {{item.recorder}}</view>
         </view>
-        <view class="meta-grid">
-          <view>样方：{{item.plotNo}}</view>
-          <view>胸径：{{item.dbh || '-'}} cm</view>
-          <view>树高：{{item.height || '-'}} m</view>
-          <view>复核：{{item.reviewStatus}}</view>
-        </view>
-        <view class="record-note muted">{{item.recordDate}} / {{item.recorder}}</view>
       </view>
       <view class="card-actions">
-        <button class="ghost-btn action-btn" bindtap="editRecord" data-id="{{item._id}}">编辑</button>
-        <button class="danger-btn action-btn" bindtap="deleteRecord" data-id="{{item._id}}">删除</button>
+        <button class="ghost-btn action-btn" bindtap="editRecord" data-id="{{item._id}}">{{item._canEdit ? '编辑' : '查看'}}</button>
+        <button wx:if="{{item._canDelete}}" class="danger-btn action-btn" bindtap="deleteRecord" data-id="{{item._id}}">删除</button>
       </view>
     </view>
   </view>
 
   <view class="panel empty-state" wx:else>暂无匹配档案</view>
+
+  <view class="pager panel" wx:if="{{totalPages > 1}}">
+    <button class="ghost-btn pager-btn" bindtap="prevPage" disabled="{{page <= 1}}">上一页</button>
+    <view class="pager-text">{{page}} / {{totalPages}}</view>
+    <button class="ghost-btn pager-btn" bindtap="nextPage" disabled="{{page >= totalPages}}">下一页</button>
+  </view>
 </view>

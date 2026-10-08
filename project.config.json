@@ -74,7 +74,12 @@
   "compileType": "miniprogram",
   "srcMiniprogramRoot": "miniprogram/",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "file",
+        "value": "miniprogram/data/ancientTrees.json"
+      }
+    ],
     "include": []
   },
   "editorSetting": {

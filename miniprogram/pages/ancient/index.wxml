@@ -1,0 +1,105 @@
+<view class="safe-page ancient-page">
+  <view class="debug-banner">古树名木健康观测测试版</view>
+
+  <view class="page-intro panel">
+    <view class="intro-main">
+      <view class="eyebrow">全市古树名木</view>
+      <view class="page-title">古树名木健康观测</view>
+      <view class="page-subtitle">共导入 {{summary.total}} 株古树名木，支持按树种、编号和地点检索。</view>
+    </view>
+    <button class="map-button" bindtap="goMap">地图</button>
+  </view>
+
+  <view class="summary-row">
+    <view class="summary-item panel">
+      <view class="summary-number">{{summary.total}}</view>
+      <view class="summary-label">登记古树</view>
+    </view>
+    <view class="summary-item panel">
+      <view class="summary-number">{{summary.withCoordinates}}</view>
+      <view class="summary-label">已定位</view>
+    </view>
+    <view class="summary-item panel">
+      <view class="summary-number">{{summary.withoutCoordinates}}</view>
+      <view class="summary-label">待补坐标</view>
+    </view>
+  </view>
+
+  <view class="search-bar panel">
+    <input class="search-input" value="{{keyword}}" placeholder="搜索树种、编号、地点" confirm-type="search" bindinput="onKeywordInput" bindconfirm="onKeywordConfirm" />
+    <button class="search-clear" wx:if="{{keyword}}" bindtap="clearKeyword">清除</button>
+  </view>
+
+  <view class="filter-list simple-filters">
+    <view wx:for="{{filters}}" wx:for-item="item" wx:key="*this" class="filter-pill {{activeFilter === item ? 'active' : ''}}" bindtap="chooseFilter" data-filter="{{item}}">{{item}}</view>
+  </view>
+
+  <view class="section-head">
+    <view>
+      <view class="section-title">古树档案</view>
+      <view class="section-subtitle">当前显示第 {{page}} / {{pageCount}} 页，每页 {{pageSize}} 条</view>
+    </view>
+    <view class="result-count">{{filteredCount}} 条</view>
+  </view>
+
+  <view wx:if="{{trees.length}}">
+    <view class="tree-card panel" wx:for="{{trees}}" wx:for-item="tree" wx:key="id" bindtap="openDetail" data-id="{{tree._id || tree.id}}">
+      <view class="tree-main tree-main-full">
+        <view class="tree-topline">
+          <view class="tree-species">{{tree.species}}</view>
+          <view class="status-tag {{tree.statusClass}}">{{tree.status}}</view>
+        </view>
+        <view class="tree-id">{{tree.id}}</view>
+        <view class="tree-meta">{{tree.level}} · {{tree.age}}</view>
+        <view class="tree-location">{{tree.location}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="empty-panel">没有找到符合条件的古树记录</view>
+
+  <view wx:if="{{showDetail && selectedTree}}" class="detail-mask" bindtap="closeDetail">
+    <view class="detail-panel panel" catchtap="stop">
+      <view class="detail-head">
+        <view>
+          <view class="detail-title">{{selectedTree.species}}</view>
+          <view class="detail-subtitle">{{selectedTree.displayNo}}</view>
+        </view>
+        <view class="status-tag {{selectedTree.statusClass}}">{{selectedTree.status}}</view>
+      </view>
+      <view wx:if="{{selectedTree.coverImage}}" class="detail-gallery">
+        <view class="detail-cover">
+          <image class="detail-cover-image" src="{{selectedTree.coverImage}}" mode="aspectFill" />
+        </view>
+        <view class="detail-gallery-meta">
+          <view>现场照片</view>
+          <view>{{selectedTree.detailImages.length}} 张</view>
+        </view>
+        <scroll-view wx:if="{{selectedTree.detailImages.length > 1}}" class="detail-thumbs" scroll-x>
+          <view class="detail-thumb" wx:for="{{selectedTree.detailImages}}" wx:for-item="img" wx:key="*this">
+            <image class="detail-thumb-image" src="{{img}}" mode="aspectFill" />
+          </view>
+        </scroll-view>
+      </view>
+      <view class="detail-grid">
+        <view class="detail-item"><view class="detail-item-box"><view class="detail-key">编号</view><view class="detail-val">{{selectedTree.treeNo || selectedTree.displayNo}}</view></view></view>
+        <view class="detail-item"><view class="detail-item-box"><view class="detail-key">树龄</view><view class="detail-val">{{selectedTree.age || '暂无'}}</view></view></view>
+        <view class="detail-item"><view class="detail-item-box"><view class="detail-key">保护级别</view><view class="detail-val">{{selectedTree.level || '暂无'}}</view></view></view>
+        <view class="detail-item"><view class="detail-item-box"><view class="detail-key">经度</view><view class="detail-val">{{selectedTree.longitude || '待补'}}</view></view></view>
+        <view class="detail-item"><view class="detail-item-box"><view class="detail-key">纬度</view><view class="detail-val">{{selectedTree.latitude || '待补'}}</view></view></view>
+        <view class="detail-item detail-item-wide"><view class="detail-item-box"><view class="detail-key">位置</view><view class="detail-val">{{selectedTree.location || '暂无位置描述'}}</view></view></view>
+        <view class="detail-item detail-item-wide"><view class="detail-item-box"><view class="detail-key">备注</view><view class="detail-val">{{selectedTree.note || selectedTree.remark || '暂无备注'}}</view></view></view>
+      </view>
+      <view class="detail-actions">
+        <button class="detail-btn ghost" bindtap="closeDetail">关闭</button>
+        <button wx:if="{{canReportIssue}}" class="detail-btn" bindtap="reportIssue">上报异常</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="pagination-row">
+    <button class="page-btn" disabled="{{page <= 1}}" bindtap="prevPage">上一页</button>
+    <view class="page-info">{{page}} / {{pageCount}}</view>
+    <button class="page-btn" disabled="{{page >= pageCount}}" bindtap="nextPage">下一页</button>
+  </view>
+</view>

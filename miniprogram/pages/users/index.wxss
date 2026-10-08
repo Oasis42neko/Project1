@@ -1,0 +1,203 @@
+.intro-panel,
+.setting-panel,
+.location-panel {
+  padding: 28rpx 32rpx;
+}
+
+.intro-title,
+.section-title,
+.setting-title {
+  color: #191919;
+  font-size: 34rpx;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.intro-desc,
+.setting-desc,
+.section-desc {
+  margin-top: 10rpx;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 25rpx;
+  line-height: 1.5;
+}
+
+.setting-panel,
+.location-panel,
+.user-list {
+  margin-top: 20rpx;
+}
+
+.setting-main,
+.section-headline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setting-main > view,
+.section-headline > view {
+  min-width: 0;
+  flex: 1;
+}
+
+.member-map {
+  width: 100%;
+  height: 360rpx;
+  margin-top: 20rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  background: #f2f2f2;
+}
+
+.refresh-btn {
+  flex: none;
+  min-width: 112rpx;
+  height: 64rpx;
+  padding: 0 20rpx;
+  font-size: 25rpx;
+  line-height: 64rpx;
+}
+
+.empty-inline,
+.empty-state {
+  padding: 48rpx 24rpx;
+  color: rgba(0, 0, 0, 0.48);
+  font-size: 26rpx;
+  text-align: center;
+}
+
+.location-list {
+  margin-top: 8rpx;
+}
+
+.location-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.08);
+}
+
+.location-row:last-child {
+  border-bottom: 0;
+}
+
+.status-dot {
+  flex: none;
+  width: 14rpx;
+  height: 14rpx;
+  margin-top: 11rpx;
+  border-radius: 50%;
+  background: #b2b2b2;
+}
+
+.status-dot.online {
+  background: #07c160;
+}
+
+.location-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.location-name {
+  color: #191919;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.role-text {
+  margin-left: 12rpx;
+  color: rgba(0, 0, 0, 0.48);
+  font-size: 23rpx;
+  font-weight: 400;
+}
+
+.location-meta,
+.user-meta {
+  margin-top: 7rpx;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 24rpx;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-card {
+  padding: 26rpx 28rpx;
+}
+
+.user-main {
+  display: flex;
+  align-items: flex-start;
+}
+
+.user-avatar {
+  flex-shrink: 0;
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 16rpx;
+  background: rgba(7, 193, 96, 0.1);
+  color: #07c160;
+  font-size: 30rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-title {
+  display: flex;
+  align-items: center;
+  color: #191919;
+  font-size: 31rpx;
+  font-weight: 500;
+}
+
+.self-tag {
+  padding: 4rpx 10rpx;
+  border-radius: 8rpx;
+  background: #f2f2f2;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 22rpx;
+  font-weight: 400;
+}
+
+.user-actions {
+  margin-top: 22rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.role-badge {
+  height: 56rpx;
+  border-radius: 8rpx;
+  background: #f2f2f2;
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.role-badge.admin {
+  background: rgba(7, 193, 96, 0.1);
+  color: #07c160;
+}
+
+.role-btn {
+  height: 68rpx;
+  font-size: 27rpx;
+}

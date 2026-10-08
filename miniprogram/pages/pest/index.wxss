@@ -1,0 +1,178 @@
+.pest-page { padding-bottom: 56rpx; }
+
+.pest-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 12rpx 8rpx 24rpx; }
+
+.eyebrow { color: #b7791f; font-size: 24rpx; font-weight: 600; }
+
+.page-title { margin-top: 8rpx; color: #191919; font-size: 42rpx; font-weight: 600; }
+
+.page-subtitle { margin-top: 10rpx; color: rgba(0, 0, 0, 0.52); font-size: 26rpx; }
+
+.report-entry { width: 160rpx; height: 72rpx; flex: 0 0 160rpx; border-radius: 12rpx; color: #ffffff; background: #b7791f; font-size: 27rpx; }
+
+.workflow { min-height: 126rpx; padding: 20rpx 18rpx; display: flex; align-items: center; }
+
+.workflow-step { min-width: 0; flex: 1; display: flex; align-items: center; }
+
+.step-number { width: 46rpx; height: 46rpx; flex: 0 0 46rpx; border-radius: 50%; color: #ffffff; background: #b7791f; font-size: 24rpx; display: flex; align-items: center; justify-content: center; }
+
+.step-title { color: #191919; font-size: 24rpx; white-space: nowrap; }
+
+.step-subtitle { margin-top: 6rpx; color: rgba(0, 0, 0, 0.45); font-size: 21rpx; white-space: nowrap; }
+
+.workflow-line { width: 30rpx; height: 2rpx; flex: 0 0 30rpx; background: #e2e2e2; }
+
+.filter-scroll { margin-top: 26rpx; white-space: nowrap; }
+
+.filter-list { display: flex; }
+
+.filter-pill { min-width: 126rpx; height: 64rpx; padding: 0 22rpx; border-radius: 32rpx; background: #ffffff; color: rgba(0, 0, 0, 0.55); font-size: 26rpx; display: flex; align-items: center; justify-content: center; }
+
+.filter-pill.active { color: #ffffff; background: #b7791f; }
+
+.section-head { margin: 34rpx 8rpx 16rpx; display: flex; align-items: flex-end; justify-content: space-between; }
+
+.section-title { color: #191919; font-size: 34rpx; font-weight: 600; }
+
+.section-subtitle { max-width: 520rpx; margin-top: 6rpx; color: rgba(0, 0, 0, 0.5); font-size: 24rpx; }
+
+.result-count { color: rgba(0, 0, 0, 0.45); font-size: 24rpx; }
+
+.report-card { min-height: 188rpx; margin-bottom: 16rpx; padding: 16rpx; display: flex; align-items: center; position: relative; }
+
+.report-image { width: 168rpx; height: 156rpx; flex: 0 0 168rpx; border-radius: 10rpx; background: #f8f0e4; }
+
+.report-main { min-width: 0; flex: 1; }
+
+.report-topline { display: flex; align-items: center; }
+
+.report-type { color: #b7791f; font-size: 24rpx; font-weight: 600; }
+
+.report-status { min-height: 38rpx; padding: 0 12rpx; border-radius: 8rpx; font-size: 22rpx; display: flex; align-items: center; }
+
+.report-status.pending { color: #b7791f; background: rgba(183, 121, 31, 0.12); }
+
+.report-status.accepted { color: #2b6cb0; background: rgba(43, 108, 176, 0.1); }
+
+.report-status.closed { color: #1d7a4d; background: rgba(29, 122, 77, 0.1); }
+
+.report-title { margin-top: 10rpx; color: #191919; font-size: 30rpx; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.report-meta { margin-top: 8rpx; color: rgba(0, 0, 0, 0.5); font-size: 24rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.report-arrow { color: rgba(0, 0, 0, 0.28); font-size: 42rpx; }
+
+.placeholder-tip { margin-top: 28rpx; padding: 24rpx 28rpx; border-left: 6rpx solid #b7791f; background: #fff8eb; }
+
+.tip-title { color: #9a6519; font-size: 27rpx; font-weight: 600; }
+
+.tip-text { margin-top: 8rpx; color: rgba(0, 0, 0, 0.58); font-size: 24rpx; line-height: 1.5; }
+
+.detail-mask { position: fixed; z-index: 10; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0, 0, 0, 0.42); display: flex; align-items: flex-end; }
+
+.detail-sheet { width: 100%; height: 86vh; max-height: 86vh; padding: 18rpx 28rpx 36rpx; border-radius: 24rpx 24rpx 0 0; background: #ffffff; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; }
+
+.report-sheet { max-height: 92vh; }
+
+.sheet-handle { width: 72rpx; height: 8rpx; margin: 0 auto 22rpx; border-radius: 4rpx; background: #d9d9d9; }
+
+.sheet-head { display: flex; align-items: flex-start; justify-content: space-between; }
+
+.sheet-title { color: #191919; font-size: 38rpx; font-weight: 600; }
+
+.sheet-id { margin-top: 6rpx; color: rgba(0, 0, 0, 0.5); font-size: 24rpx; }
+
+.close-button { width: 56rpx; height: 56rpx; color: rgba(0, 0, 0, 0.55); font-size: 44rpx; }
+
+.sheet-image { width: 100%; height: 230rpx; margin-top: 18rpx; border-radius: 12rpx; background: #f8f0e4; }
+
+.detail-grid { margin-top: 18rpx; display: flex; }
+
+.detail-grid view { display: flex; flex-direction: column; }
+
+.detail-grid text:first-child { color: rgba(0, 0, 0, 0.45); font-size: 23rpx; }
+
+.detail-grid text:last-child { color: #191919; font-size: 26rpx; }
+
+.detail-note { margin-top: 20rpx; padding: 18rpx; color: rgba(0, 0, 0, 0.62); background: #f7f8f7; font-size: 25rpx; line-height: 1.5; }
+
+.form-row { min-height: 78rpx; margin-top: 14rpx; padding: 0 18rpx; border-bottom: 1rpx solid #eeeeee; display: flex; align-items: center; justify-content: space-between; }
+
+.form-label { color: #191919; font-size: 28rpx; }
+
+.form-value { color: rgba(0, 0, 0, 0.5); font-size: 27rpx; }
+
+.form-input, .form-textarea { width: 100%; margin-top: 14rpx; padding: 20rpx 18rpx; border-radius: 10rpx; background: #f7f8f7; color: #191919; font-size: 27rpx; }
+
+.form-input { height: 78rpx; }
+
+.location-section { margin-top: 14rpx; }
+
+.location-section .form-input { margin-top: 0; }
+
+.location-actions { display: flex; gap: 16rpx; margin-top: 12rpx; }
+
+.location-action { flex: 1; height: 62rpx; margin: 0; padding: 0 16rpx; border: 1rpx solid rgba(183, 121, 31, 0.28); border-radius: 10rpx; color: #9a6519; background: #fff8eb; font-size: 24rpx; line-height: 62rpx; }
+
+.location-hint { margin-top: 8rpx; color: rgba(0, 0, 0, 0.48); font-size: 23rpx; line-height: 1.4; }
+
+.form-textarea { min-height: 138rpx; }
+
+.photo-picker { width: 100%; height: 150rpx; margin-top: 14rpx; border: 2rpx dashed #d6d6d6; border-radius: 10rpx; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+
+.photo-placeholder { color: rgba(0, 0, 0, 0.45); font-size: 26rpx; }
+
+.picked-image { width: 100%; height: 100%; }
+
+.report-button, .submit-button { height: 82rpx; margin-top: 22rpx; border-radius: 12rpx; color: #ffffff; background: #b7791f; font-size: 30rpx; }
+
+.report-sheet { height: 94vh; max-height: 94vh; }
+
+.sheet-scroll { min-height: 0; height: 0; flex: 1; overflow: hidden; }
+
+.sheet-image { height: auto; display: block; }
+
+.photo-section-head { margin-top: 18rpx; display: flex; align-items: center; justify-content: space-between; }
+
+.photo-add-button { min-width: 138rpx; height: 58rpx; padding: 0 18rpx; border-radius: 10rpx; color: #b7791f; background: rgba(183, 121, 31, 0.12); font-size: 24rpx; }
+
+.photo-stage { width: 100%; margin-top: 12rpx; position: relative; overflow: hidden; border-radius: 12rpx; background: #f8f0e4; }
+
+.photo-full { display: block; width: 100%; height: auto; }
+
+.photo-action { position: absolute; top: 16rpx; height: 58rpx; padding: 0 18rpx; border-radius: 10rpx; color: #ffffff; font-size: 24rpx; display: flex; align-items: center; justify-content: center; }
+
+.photo-remove { left: 16rpx; background: rgba(0, 0, 0, 0.58); }
+
+.photo-recognize { right: 16rpx; background: #b7791f; }
+
+.photo-empty { width: 100%; min-height: 118rpx; margin-top: 12rpx; border: 2rpx dashed #d6d6d6; border-radius: 10rpx; color: rgba(0, 0, 0, 0.45); font-size: 25rpx; display: flex; align-items: center; justify-content: center; text-align: center; }
+
+.pest-recognition { margin-top: 16rpx; padding: 20rpx; border-left: 6rpx solid #b7791f; background: #fff8eb; }
+
+.recognition-title { color: #9a6519; font-size: 27rpx; font-weight: 600; }
+
+.recognition-main { margin-top: 10rpx; color: #191919; font-size: 31rpx; font-weight: 600; }
+
+.recognition-meta { margin-top: 8rpx; color: rgba(0, 0, 0, 0.58); font-size: 24rpx; }
+
+.recognition-reason { margin-top: 12rpx; color: rgba(0, 0, 0, 0.65); font-size: 25rpx; line-height: 1.5; }
+
+.recognition-warning { margin-top: 10rpx; color: #9a6519; font-size: 23rpx; line-height: 1.45; }
+
+.recognition-actions { display: flex; }
+
+.recognition-button { height: 68rpx; border-radius: 10rpx; font-size: 25rpx; }
+
+
+.admin-actions {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.admin-action {
+  flex: 1;
+  height: 72rpx;
+  border-radius: 12rpx;
+}

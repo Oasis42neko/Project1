@@ -1,0 +1,70 @@
+﻿<view class="safe-page forest-page">
+  <view class="forest-toolbar">
+    <view class="toolbar-copy">
+      <view class="toolbar-kicker">森林健康观测</view>
+      <view class="toolbar-title">凤凰山实地调查</view>
+    </view>
+    <button class="logout-link" bindtap="logout">退出</button>
+  </view>
+
+  <view class="forest-hero">
+    <image class="forest-hero-image" src="/assets/home/fenghuang-mountain.jpg" mode="aspectFill" />
+    <view class="forest-hero-shade"></view>
+    <view class="hero-copy">
+      <image class="forest-calligraphy" src="/assets/home/forest-calligraphy-light.png" mode="widthFix" />
+      <view class="hero-caption">共享样树档案 · 现场采集板块</view>
+    </view>
+    <view class="hero-bottom">
+      <view class="hero-location">潮州 · 凤凰山</view>
+      <view class="hero-status">20 个调查样地</view>
+    </view>
+  </view>
+
+  <view class="action-grid">
+    <button class="action-card" bindtap="goCreate">
+      <view class="action-icon action-add">+</view>
+      <view class="action-copy"><view class="action-title">录入样树</view><view class="action-meta">现场创建一树一档</view></view>
+      <view class="action-arrow">→</view>
+    </button>
+    <button class="action-card" bindtap="goMap">
+      <view class="action-icon action-map">⌖</view>
+      <view class="action-copy"><view class="action-title">查看地图</view><view class="action-meta">样方定位与导航</view></view>
+      <view class="action-arrow">→</view>
+    </button>
+  </view>
+
+  <view class="section-head">
+    <view><view class="section-title">实时概况</view><view class="section-subtitle">共享数据库 · {{userTag}}</view></view>
+    <button class="ghost-link" bindtap="goStats">统计 →</button>
+  </view>
+  <view class="summary-strip">
+    <view class="summary-stat"><view class="summary-value">{{stats.total}}</view><view class="summary-label">树木档案</view></view>
+    <view class="summary-stat"><view class="summary-value">{{stats.plots}}</view><view class="summary-label">已覆盖样方</view></view>
+    <view class="summary-stat"><view class="summary-value">{{stats.species}}</view><view class="summary-label">记录树种</view></view>
+    <view class="summary-stat warning"><view class="summary-value">{{stats.pendingReview}}</view><view class="summary-label">待复核</view></view>
+  </view>
+
+  <view class="section-head compact-head">
+    <view><view class="section-title">健康概览</view><view class="section-subtitle">样树状态分布</view></view>
+  </view>
+  <view class="health-list">
+    <view class="health-item" wx:for="{{healthCards}}" wx:key="name">
+      <view class="health-top"><view class="health-name">{{item.name}}</view><view class="health-percent">{{item.percent}}%</view></view>
+      <view class="health-track"><view class="health-fill" style="width: {{item.percent}}%;"></view></view>
+      <view class="health-count">{{item.count}} 株</view>
+    </view>
+  </view>
+
+  <view class="section-head compact-head recent-head">
+    <view><view class="section-title">最近录入</view><view class="section-subtitle">提交后进入复核队列</view></view>
+    <button class="ghost-link" bindtap="goRecords">全部 →</button>
+  </view>
+  <view class="recent-panel" wx:if="{{recentRecords.length}}">
+    <view class="recent-row" wx:for="{{recentRecords}}" wx:key="_id">
+      <view class="recent-index">{{index + 1}}</view>
+      <view class="recent-main"><view class="recent-title">{{item.treeNo}} · {{item.species}}</view><view class="recent-meta">{{item.plotNo}} / {{item.recordDate}} / {{item.recorder}}</view></view>
+      <view class="badge">{{item.healthLevel}}</view>
+    </view>
+  </view>
+  <view class="empty-panel" wx:else>暂无档案，先录入第一株样树</view>
+</view>

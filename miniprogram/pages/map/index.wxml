@@ -1,33 +1,63 @@
-<view class="map-page">
+﻿<view class="map-page">
   <map
     class="forest-map"
     latitude="{{latitude}}"
     longitude="{{longitude}}"
     scale="{{scale}}"
     markers="{{markers}}"
+    polygons="{{polygons}}"
+    polyline="{{polyline}}"
     show-location
     bindmarkertap="onMarkerTap"
   ></map>
 
-  <view class="map-dock panel">
-    <view class="dock-head">
+  <cover-view class="locate-cover-control" bindtap="onLocateTap">
+    {{locating ? "定位中..." : "定位"}}
+  </cover-view>
+
+  <cover-view wx:if="{{selectedPlot}}" class="navigate-cover-control" bindtap="openTargetNavigation">
+    导航
+  </cover-view>
+
+  <view class="nav-summary panel">
+    <view class="summary-row">
       <view>
-        <view class="dock-title">样树分布</view>
-        <view class="dock-subtitle">已定位 {{markers.length}} 株 / 共 {{records.length}} 份档案</view>
+        <view class="dock-title">样方导航</view>
+        <view class="dock-subtitle">我的精度 {{myAccuracy}} · 目标距离 {{targetDistance}}</view>
       </view>
-      <button class="secondary-btn mini" bindtap="goCreate">录入</button>
+      <view class="secondary-btn mini locate-placeholder">
+        {{locating ? "定位中..." : "定位"}}
+      </view>
     </view>
 
-    <view class="selected" wx:if="{{selected}}">
-      <view>
-        <view class="selected-title">{{selected.treeNo}} · {{selected.species}}</view>
-        <view class="selected-meta">{{selected.plotNo}} / {{selected.healthLevel}} / {{selected.recordDate}}</view>
-      </view>
-      <view class="selected-actions">
-        <button class="ghost-btn mini" bindtap="openSelectedLocation">导航</button>
-        <button class="primary-btn mini" bindtap="editSelected">查看</button>
-      </view>
+    <view class="precision-note">
+      手机定位精度由设备和环境决定，林下、山谷通常无法稳定保证 2m。
     </view>
-    <view class="muted map-tip" wx:else>点击地图标记查看样树摘要</view>
+
+    <view wx:if="{{locationError}}" class="location-error" bindtap="onLocationHelpTap">
+      {{locationError}} · 点击此处打开权限设置
+    </view>
+
+    <view class="selected" wx:if="{{selectedPlot}}">
+      <view>
+        <view class="selected-title">{{selectedPlot.plotNo}} 样方中心</view>
+        <view class="selected-meta">{{selectedPlot.latitudeText}}, {{selectedPlot.longitudeText}}</view>
+      </view>
+      <view class="primary-btn mini navigate-placeholder">导航</view>
+    </view>
   </view>
+
+  <scroll-view class="plot-strip" scroll-x enable-flex>
+    <view
+      class="plot-chip {{selectedPlot && selectedPlot.plotNo === item.plotNo ? 'active' : ''}}"
+      wx:for="{{plotList}}"
+      wx:key="plotNo"
+      data-plot-no="{{item.plotNo}}"
+      bindtap="selectPlot"
+      style="border-color: {{item.color}};"
+    >
+      <view class="chip-title">{{item.plotNo}}</view>
+      <view class="chip-distance">{{item.distanceText}}</view>
+    </view>
+  </scroll-view>
 </view>

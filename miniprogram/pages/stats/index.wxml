@@ -18,12 +18,30 @@
     </view>
   </view>
 
+  <view class="panel export-panel" wx:if="{{canManage}}">
+    <view>
+      <view class="export-title">用户权限管理</view>
+      <view class="export-subtitle">查看登录用户，并设置管理员或普通录入员</view>
+    </view>
+    <button class="secondary-btn export-btn" bindtap="goUsers">管理</button>
+  </view>
+
   <view class="panel export-panel">
     <view>
       <view class="export-title">数据移交导出</view>
       <view class="export-subtitle">生成 CSV 文件，包含全部树木健康档案字段</view>
     </view>
-    <button class="primary-btn export-btn" loading="{{exporting}}" bindtap="exportCsv">导出</button>
+    <button wx:if="{{canManage}}" class="primary-btn export-btn" loading="{{exporting}}" bindtap="exportCsv">导出</button>
+    <view wx:else class="permission-note">管理员</view>
+  </view>
+
+  <view class="panel export-panel">
+    <view>
+      <view class="export-title">测试数据</view>
+      <view class="export-subtitle">生成 45 条演示档案，用于分页、搜索、地图和照片测试</view>
+    </view>
+    <button wx:if="{{canManage}}" class="secondary-btn export-btn" loading="{{seeding}}" bindtap="seedDemoData">导入</button>
+    <view wx:else class="permission-note">管理员</view>
   </view>
 
   <view class="panel file-panel" wx:if="{{exportFileID}}">

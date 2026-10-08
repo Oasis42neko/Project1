@@ -1,59 +1,167 @@
-.map-page {
-  min-height: 100vh;
-  position: relative;
-  background: #f7f7f7;
+.map-page {
+  min-height: 100vh;
+  position: relative;
+  background: #f7f7f7;
+}
+
+.forest-map {
+  width: 100vw;
+  height: 100vh;
+}
+
+.nav-summary {
+  position: fixed;
+  left: 24rpx;
+  right: 24rpx;
+  bottom: 190rpx;
+  padding: 24rpx 28rpx;
+}
+
+.summary-row,
+.selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dock-title,
+.selected-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #191919;
+  line-height: 1.35;
+}
+
+.dock-subtitle,
+.selected-meta,
+.precision-note {
+  margin-top: 7rpx;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 23rpx;
+  line-height: 1.42;
+}
+
+.precision-note {
+  padding-top: 14rpx;
+}
+.location-error {
+  margin-top: 12rpx;
+  padding: 12rpx 16rpx;
+  border-radius: 8rpx;
+  color: #b42318;
+  background: #fff1f0;
+  font-size: 23rpx;
+  line-height: 1.45;
+}
+
+.selected {
+  margin-top: 18rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid rgba(0, 0, 0, 0.08);
+}
+
+.plot-strip {
+  box-sizing: border-box;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 40rpx;
+  width: 100vw;
+  white-space: nowrap;
+  padding: 0 24rpx;
+}
+
+.plot-chip {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 132rpx;
+  height: 104rpx;
+  margin-right: 14rpx;
+  padding: 12rpx;
+  border: 2rpx solid #fa5151;
+  border-radius: 8rpx;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.plot-chip.active {
+  background: #191919;
+  border-color: #191919 !important;
+}
+
+.chip-title {
+  color: #191919;
+  font-size: 27rpx;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.plot-chip.active .chip-title,
+.plot-chip.active .chip-distance {
+  color: #ffffff;
+}
+
+.chip-distance {
+  margin-top: 8rpx;
+  color: rgba(0, 0, 0, 0.55);
+  font-size: 22rpx;
+  line-height: 1.2;
+}
+
+.mini {
+  flex: none;
+  min-width: 116rpx;
+  height: 68rpx;
+  padding: 0 18rpx;
+  font-size: 27rpx;
+  line-height: 68rpx;
+}
+
+.locate-placeholder {
+  opacity: 0;
 }
 
-.forest-map {
-  width: 100vw;
-  height: 100vh;
-}
-
-.map-dock {
+.locate-cover-control {
   position: fixed;
-  left: 24rpx;
-  right: 24rpx;
-  bottom: 42rpx;
-  padding: 28rpx 32rpx;
-}
-
-.dock-head,
-.selected {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18rpx;
-}
-
-.dock-title,
-.selected-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #191919;
-}
-
-.dock-subtitle,
-.selected-meta,
-.map-tip {
-  margin-top: 8rpx;
-  color: rgba(0, 0, 0, 0.5);
-  font-size: 24rpx;
-}
-
-.selected {
-  margin-top: 24rpx;
-  padding-top: 22rpx;
-  border-top: 1rpx solid rgba(0, 0, 0, 0.1);
-}
-
-.selected-actions {
-  display: flex;
-  gap: 12rpx;
-}
-
-.mini {
+  z-index: 20;
+  right: 52rpx;
+  bottom: 214rpx;
   width: 116rpx;
-  height: 72rpx;
-  padding: 0;
-  font-size: 28rpx;
+  height: 68rpx;
+  border-radius: 10rpx;
+  color: #ffffff;
+  background: #1677ff;
+  font-size: 27rpx;
+  line-height: 68rpx;
+  text-align: center;
+}
+.plot-strip {
+  height: 104rpx;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.plot-chip {
+  display: inline-flex;
+  vertical-align: top;
+}
+
+.navigate-placeholder {
+  opacity: 0;
+}
+
+.navigate-cover-control {
+  position: fixed;
+  z-index: 20;
+  right: 182rpx;
+  bottom: 214rpx;
+  width: 250rpx;
+  height: 68rpx;
+  border-radius: 10rpx;
+  color: #ffffff;
+  background: #07c160;
+  font-size: 27rpx;
+  line-height: 68rpx;
+  text-align: center;
 }

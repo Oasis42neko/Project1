@@ -2,6 +2,24 @@ const { createEmptyTree, fieldSections } = require("../../models/treeFields");
 const treeService = require("../../services/treeService");
 const authService = require("../../services/authService");
 const { validateTreeRecord } = require("../../utils/validators");
+const {
+  getPlotCenterLocation,
+  getPlotMatchStatus,
+  getPlotNos,
+  getPlotPolygon,
+  getPlotRangeText,
+  OUTSIDE_FIXED_PLOT_LABEL,
+  parseCoordinateValue,
+  formatCoordinateDecimal,
+  formatCoordinateDms,
+} = require("../../models/plotAreas");
+
+const plotColors = [
+  "#FA5151", "#F97316", "#F59E0B", "#84CC16", "#22C55E",
+  "#14B8A6", "#06B6D4", "#0EA5E9", "#3B82F6", "#6366F1",
+  "#8B5CF6", "#A855F7", "#D946EF", "#EC4899", "#F43F5E",
+  "#EF4444", "#FB7185", "#F97316", "#EAB308", "#10B981",
+];
 
 const attachFieldValues = (sections, form) => sections.map((section) => ({
   ...section,
@@ -12,29 +30,277 @@ const attachFieldValues = (sections, form) => sections.map((section) => ({
   })),
 }));
 
+const defaultCoordFormat = "dms";
+const formatCoordinateForDisplay = (value, coordFormat = defaultCoordFormat) => {
+  const formatted = coordFormat === "decimal" ? formatCoordinateDecimal(value) : formatCoordinateDms(value);
+  return formatted || (value === undefined || value === null ? "" : String(value));
+};
+const normalizeFormCoordinates = (form, coordFormat = defaultCoordFormat) => ({
+  ...form,
+  latitude: formatCoordinateForDisplay(form.latitude, coordFormat),
+  longitude: formatCoordinateForDisplay(form.longitude, coordFormat),
+});
+
+const defaultSystemSettings = {
+  allowManualLocation: true,
+};
+
+const defaultMapPreview = {
+  latitude: 23.84728034,
+  longitude: 116.57898334,
+  scale: 11,
+  markers: [],
+  polygons: [],
+  hasLocation: false,
+};
+
+const defaultPlotStatus = {
+  visible: false,
+  className: "neutral",
+  title: "",
+  desc: "",
+  rangeText: "",
+  actionVisible: false,
+};
+
+const defaultPlantRecognition = {
+  visible: false,
+  species: "",
+  latinName: "",
+  confidence: "",
+  reason: "",
+  candidates: [],
+  uncertain: false,
+};
+
+const colorWithAlpha = (hex, alpha) => `${hex}${alpha}`;
+
+const buildPlotCenters = () => getPlotNos().map((plotNo, index) => {
+  const center = getPlotCenterLocation(plotNo);
+  if (!center) return null;
+  return {
+    plotNo,
+    index,
+    latitude: Number(center.latitude),
+    longitude: Number(center.longitude),
+    altitude: center.altitude,
+  };
+}).filter(Boolean);
+
+const buildMapPreview = (form) => {
+  const plotCenters = buildPlotCenters();
+  if (!plotCenters.length) return defaultMapPreview;
+
+  const latitudes = plotCenters.map((item) => item.latitude);
+  const longitudes = plotCenters.map((item) => item.longitude);
+  const minLatitude = Math.min(...latitudes);
+  const maxLatitude = Math.max(...latitudes);
+  const minLongitude = Math.min(...longitudes);
+  const maxLongitude = Math.max(...longitudes);
+  const latitude = Number(((minLatitude + maxLatitude) / 2).toFixed(8));
+  const longitude = Number(((minLongitude + maxLongitude) / 2).toFixed(8));
+  const span = Math.max(maxLatitude - minLatitude, maxLongitude - minLongitude);
+
+  let scale = 11;
+  if (span < 0.01) scale = 14;
+  else if (span < 0.02) scale = 13;
+  else if (span < 0.03) scale = 12;
+  else if (span < 0.05) scale = 11;
+  else scale = 10;
+
+  const selectedPlotNo = form.plotNo;
+  const manualLatitude = parseCoordinateValue(form.latitude);
+  const manualLongitude = parseCoordinateValue(form.longitude);
+  const manualLocationVisible = Number.isFinite(manualLatitude) && Number.isFinite(manualLongitude);
+
+  const markers = plotCenters.map((plot, index) => {
+    const selected = plot.plotNo === selectedPlotNo;
+    const color = selected ? "#1677FF" : plotColors[index % plotColors.length];
+    return {
+      id: index + 1,
+      latitude: plot.latitude,
+      longitude: plot.longitude,
+      width: selected ? 36 : 28,
+      height: selected ? 36 : 28,
+      callout: {
+        content: plot.plotNo,
+        color: "#FFFFFF",
+        fontSize: 12,
+        borderRadius: 16,
+        bgColor: colorWithAlpha(color, "DD"),
+        padding: 8,
+        display: "BYCLICK",
+      },
+    };
+  });
+
+  if (manualLocationVisible) {
+    markers.push({
+      id: 9000,
+      latitude: manualLatitude,
+      longitude: manualLongitude,
+      width: 26,
+      height: 26,
+      callout: {
+        content: "当前填写位置",
+        color: "#FFFFFF",
+        fontSize: 11,
+        borderRadius: 12,
+        bgColor: "#1D7A4D",
+        padding: 6,
+        display: "ALWAYS",
+      },
+    });
+  }
+
+  const polygons = getPlotNos().map((plotNo, index) => {
+    const selected = plotNo === selectedPlotNo;
+    const color = selected ? "#1677FF" : plotColors[index % plotColors.length];
+    return {
+      points: getPlotPolygon(plotNo),
+      strokeWidth: selected ? 3 : 2,
+      strokeColor: colorWithAlpha(color, "CC"),
+      fillColor: colorWithAlpha(color, selected ? "44" : "22"),
+    };
+  });
+
+  return {
+    latitude,
+    longitude,
+    scale,
+    markers,
+    polygons,
+    hasLocation: true,
+  };
+};
+
+const buildPlotStatus = (form, systemSettings) => {
+  if (!form.plotNo) return defaultPlotStatus;
+  if (form.plotNo === OUTSIDE_FIXED_PLOT_LABEL) {
+    return {
+      visible: true,
+      className: "warning",
+      title: OUTSIDE_FIXED_PLOT_LABEL,
+      desc: form.latitude && form.longitude
+        ? "该记录不受固定样方 20m × 20m 范围校验，请确认定位坐标准确。"
+        : "该区域不属于固定样方，请填写实际定位坐标后保存。",
+      rangeText: "",
+      actionVisible: false,
+    };
+  }
+  const matchStatus = getPlotMatchStatus(form.plotNo, form.latitude, form.longitude);
+  const rangeText = getPlotRangeText(form.plotNo);
+  const allowAction = !!(systemSettings && systemSettings.allowManualLocation);
+
+  if (matchStatus.state === "matched") {
+    return {
+      visible: true,
+      className: "neutral",
+      title: `${form.plotNo} 坐标已匹配`,
+      desc: "当前经纬度已落在该样方范围内。",
+      rangeText,
+      actionVisible: false,
+    };
+  }
+  if (matchStatus.state === "noLocation") {
+    return {
+      visible: true,
+      className: "warning",
+      title: `${form.plotNo} 已选中`,
+      desc: "还没有填写经纬度，点击“填入样方中心”可自动回填。",
+      rangeText,
+      actionVisible: allowAction,
+    };
+  }
+  if (matchStatus.state === "mismatch") {
+    return {
+      visible: true,
+      className: "error",
+      title: `${form.plotNo} 坐标不在样方范围内`,
+      desc: "可以核对录入值，或直接回填样方中心。",
+      rangeText,
+      actionVisible: allowAction,
+    };
+  }
+  if (matchStatus.state === "missingArea") {
+    return {
+      visible: true,
+      className: "error",
+      title: "样方不存在",
+      desc: "请先重新选择样地编号。",
+      rangeText: "",
+      actionVisible: false,
+    };
+  }
+  return defaultPlotStatus;
+};
+
+const buildImagePreviews = (images = []) => images.map((src, index) => ({
+  src,
+  preview: src,
+  index,
+}));
+
+const buildPlantRecognition = (payload = {}) => {
+  const candidates = Array.isArray(payload.candidates) ? payload.candidates : [];
+  const visible = !!(payload.visible || payload.species || payload.name || payload.latinName || payload.latin_name || payload.reason || payload.description || payload.confidence !== undefined || candidates.length);
+  return {
+    visible,
+    species: payload.species || payload.name || (candidates[0] && candidates[0].species) || "",
+    latinName: payload.latinName || payload.latin_name || "",
+    confidence: payload.confidence !== undefined && payload.confidence !== null ? String(payload.confidence) : "",
+    reason: payload.reason || payload.description || "",
+    candidates,
+    uncertain: !!payload.uncertain,
+  };
+};
+
 Page({
   data: {
     id: "",
     form: createEmptyTree(),
     sections: attachFieldValues(fieldSections, createEmptyTree()),
     saving: false,
+    coordFormat: defaultCoordFormat,
+    systemSettings: defaultSystemSettings,
+    mapPreview: defaultMapPreview,
+    plotStatus: defaultPlotStatus,
+    imagePreviews: [],
+    recognizingPlant: false,
+    plantRecognition: defaultPlantRecognition,
   },
 
   onLoad(query) {
     if (!authService.requireLogin()) return;
+    const defaults = wx.getStorageSync("forestFormDefaults") || {};
+    this.setData({
+      form: {
+        ...this.data.form,
+        plotNo: defaults.plotNo || this.data.form.plotNo,
+        recorder: defaults.recorder || this.data.form.recorder,
+      },
+    }, () => {
+      this.refreshSections();
+      this.refreshDerivedState();
+      this.autoFillSelectedPlotCenter({ force: false });
+    });
+    this.loadSystemSettings();
     if (query.id) {
       this.setData({ id: query.id });
       this.loadRecord(query.id);
-    } else {
-      const defaults = wx.getStorageSync("forestFormDefaults") || {};
+    }
+  },
+
+  async loadSystemSettings() {
+    try {
+      const res = await treeService.getSystemSettings();
       this.setData({
-        form: {
-          ...this.data.form,
-          plotNo: defaults.plotNo || this.data.form.plotNo,
-          recorder: defaults.recorder || this.data.form.recorder,
+        systemSettings: {
+          allowManualLocation: res.data ? res.data.allowManualLocation !== false : true,
         },
-      });
-      this.refreshSections();
+      }, () => this.refreshDerivedState());
+    } catch (error) {
+      this.setData({ systemSettings: defaultSystemSettings }, () => this.refreshDerivedState());
     }
   },
 
@@ -42,8 +308,10 @@ Page({
     wx.showLoading({ title: "加载中" });
     try {
       const res = await treeService.getTree(id);
-      this.setData({ form: { ...createEmptyTree(), ...(res.data || {}) } });
+      this.setData({ form: normalizeFormCoordinates({ ...createEmptyTree(), ...(res.data || {}) }, this.data.coordFormat) });
       this.refreshSections();
+      this.refreshDerivedState();
+      this.autoFillSelectedPlotCenter({ force: false });
     } catch (error) {
       wx.showToast({ title: "档案加载失败", icon: "none" });
     } finally {
@@ -55,11 +323,36 @@ Page({
     this.setData({ sections: attachFieldValues(fieldSections, this.data.form) });
   },
 
+  refreshDerivedState() {
+    this.setData({
+      imagePreviews: buildImagePreviews(this.data.form.images || []),
+      mapPreview: buildMapPreview(this.data.form),
+      plotStatus: buildPlotStatus(this.data.form, this.data.systemSettings),
+    });
+  },
+
   updateValue(key, value) {
-    this.setData({ [`form.${key}`]: value }, () => this.refreshSections());
+    const patch = { [`form.${key}`]: value };
+    if (key === "plotNo" && value === OUTSIDE_FIXED_PLOT_LABEL) {
+      patch["form.latitude"] = "";
+      patch["form.longitude"] = "";
+      patch["form.altitude"] = "";
+      patch["form.locationSource"] = "manual";
+    }
+    this.setData(patch, () => {
+      this.refreshSections();
+      this.refreshDerivedState();
+      if (key === "plotNo") {
+        this.autoFillSelectedPlotCenter({ force: true });
+      }
+    });
   },
 
   onInput(event) {
+    this.updateValue(event.currentTarget.dataset.key, event.detail.value);
+  },
+
+  onLocationInput(event) {
     this.updateValue(event.currentTarget.dataset.key, event.detail.value);
   },
 
@@ -73,12 +366,43 @@ Page({
     this.updateValue(event.currentTarget.dataset.key, event.detail.value);
   },
 
+  changeCoordFormat(event) {
+    const nextFormat = event.currentTarget.dataset.format === "decimal" ? "decimal" : "dms";
+    if (nextFormat === this.data.coordFormat) return;
+    this.setData({
+      coordFormat: nextFormat,
+      form: normalizeFormCoordinates(this.data.form, nextFormat),
+    }, () => {
+      this.refreshSections();
+      this.refreshDerivedState();
+    });
+  },
+
+  autoFillSelectedPlotCenter({ force = false } = {}) {
+    const center = getPlotCenterLocation(this.data.form.plotNo);
+    if (!center) return;
+    if (!force && this.data.form.latitude && this.data.form.longitude) return;
+    this.setData({
+      "form.latitude": formatCoordinateForDisplay(center.latitude, this.data.coordFormat),
+      "form.longitude": formatCoordinateForDisplay(center.longitude, this.data.coordFormat),
+      "form.altitude": center.altitude !== undefined && center.altitude !== null && center.altitude !== ""
+        ? Number(center.altitude).toFixed(1)
+        : this.data.form.altitude,
+    }, () => {
+      this.refreshSections();
+      this.refreshDerivedState();
+    });
+  },
+
   applyLocation(location) {
     this.setData({
-      "form.latitude": Number(location.latitude).toFixed(6),
-      "form.longitude": Number(location.longitude).toFixed(6),
-      "form.altitude": location.altitude ? Number(location.altitude).toFixed(1) : this.data.form.altitude,
-    }, () => this.refreshSections());
+      "form.latitude": formatCoordinateForDisplay(location.latitude, this.data.coordFormat),
+      "form.longitude": formatCoordinateForDisplay(location.longitude, this.data.coordFormat),
+      "form.altitude": location.altitude !== undefined && location.altitude !== null && location.altitude !== "" ? Number(location.altitude).toFixed(1) : this.data.form.altitude,
+    }, () => {
+      this.refreshSections();
+      this.refreshDerivedState();
+    });
   },
 
   getLocation() {
@@ -96,18 +420,40 @@ Page({
 
   chooseLocation() {
     wx.chooseLocation({
-      latitude: this.data.form.latitude ? Number(this.data.form.latitude) : undefined,
-      longitude: this.data.form.longitude ? Number(this.data.form.longitude) : undefined,
+      latitude: this.data.form.latitude ? parseCoordinateValue(this.data.form.latitude) : undefined,
+      longitude: this.data.form.longitude ? parseCoordinateValue(this.data.form.longitude) : undefined,
       success: (res) => {
         this.applyLocation(res);
         const remark = this.data.form.remark || "";
         const locationText = res.name || res.address;
         if (locationText && !remark.includes(locationText)) {
-          this.setData({ "form.remark": remark ? `${remark}
-位置：${locationText}` : `位置：${locationText}` }, () => this.refreshSections());
+          this.setData({ "form.remark": remark ? `${remark}\n位置：${locationText}` : `位置：${locationText}` }, () => this.refreshSections());
         }
       },
       fail: () => wx.showToast({ title: "未选择位置", icon: "none" }),
+    });
+  },
+
+  openMapPreview() {
+    wx.switchTab({ url: "/pages/map/index" });
+  },
+
+  applyPlotCenter() {
+    const center = getPlotCenterLocation(this.data.form.plotNo);
+    if (!center) {
+      wx.showToast({ title: "请先选择样方", icon: "none" });
+      return;
+    }
+    this.setData({
+      "form.latitude": formatCoordinateForDisplay(center.latitude, this.data.coordFormat),
+      "form.longitude": formatCoordinateForDisplay(center.longitude, this.data.coordFormat),
+      "form.altitude": center.altitude !== undefined && center.altitude !== null && center.altitude !== ""
+        ? Number(center.altitude).toFixed(1)
+        : this.data.form.altitude,
+    }, () => {
+      this.refreshSections();
+      this.refreshDerivedState();
+      wx.showToast({ title: "已填入样方中心" });
     });
   },
 
@@ -118,7 +464,7 @@ Page({
       sourceType: ["camera", "album"],
       success: async (res) => {
         const images = [...(this.data.form.images || []), ...res.tempFilePaths].slice(0, 6);
-        this.setData({ "form.images": images });
+        this.setData({ "form.images": images }, () => this.refreshDerivedState());
       },
     });
   },
@@ -127,7 +473,60 @@ Page({
     const index = event.currentTarget.dataset.index;
     const images = [...(this.data.form.images || [])];
     images.splice(index, 1);
-    this.setData({ "form.images": images });
+    this.setData({ "form.images": images }, () => this.refreshDerivedState());
+  },
+
+  async recognizePlant(event) {
+    if (this.data.recognizingPlant) return;
+    const index = Number(event.currentTarget.dataset.index);
+    const images = this.data.form.images || [];
+    const image = images[index];
+    if (!image) return;
+    this.setData({ recognizingPlant: true });
+    try {
+      let fileID = image;
+      if (!String(image).startsWith("cloud://")) {
+        const ext = image.includes(".") ? image.slice(image.lastIndexOf(".")) : ".jpg";
+        const upload = await wx.cloud.uploadFile({
+          cloudPath: `forest-health/recognition/${Date.now()}-${index}${ext}`,
+          filePath: image,
+        });
+        fileID = upload.fileID;
+      }
+      const res = await treeService.recognizePlant(fileID);
+      const payload = res.data || {};
+      this.setData({ plantRecognition: buildPlantRecognition(payload) });
+    } catch (error) {
+      wx.showToast({ title: "识别失败", icon: "none" });
+    } finally {
+      this.setData({ recognizingPlant: false });
+    }
+  },
+
+  copyPlantRecognition() {
+    const recognition = this.data.plantRecognition;
+    if (!recognition.visible) return;
+    const parts = [
+      recognition.species,
+      recognition.latinName ? `(${recognition.latinName})` : "",
+      recognition.confidence !== "" ? `置信度 ${recognition.confidence}` : "",
+      recognition.reason,
+    ].filter(Boolean);
+    if (!parts.length) return;
+    wx.setClipboardData({ data: parts.join(" ") });
+  },
+
+  applyPlantRecognition() {
+    const recognition = this.data.plantRecognition;
+    if (!recognition.visible) return;
+    const patch = {};
+    if (recognition.species) patch["form.species"] = recognition.species;
+    if (recognition.latinName) patch["form.latinName"] = recognition.latinName;
+    this.setData(patch, () => {
+      this.refreshSections();
+      this.refreshDerivedState();
+      wx.showToast({ title: "已填入表单" });
+    });
   },
 
   async uploadImages(record) {

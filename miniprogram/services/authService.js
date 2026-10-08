@@ -18,6 +18,9 @@ const setCachedUser = (user) => {
   const app = getApp();
   if (app && app.globalData) {
     app.globalData.user = user;
+    if (typeof app.startLocationSharing === "function") {
+      app.startLocationSharing();
+    }
   }
 };
 

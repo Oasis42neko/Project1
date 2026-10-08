@@ -1,12 +1,64 @@
 <view class="safe-page form-page">
   <view class="panel location-card">
-    <view>
-      <view class="location-title">样树定位<text class="required">*</text></view>
-      <view class="location-meta">经度 {{form.longitude || '-'}} / 纬度 {{form.latitude || '-'}} / 海拔 {{form.altitude || '-' }} m</view>
+    <view class="location-title-row">
+      <view>
+        <view class="location-title">样树定位<text class="required">*</text></view>
+        <view class="location-subtitle">定位后会在地图中标记具体样树位置</view>
+      </view>
     </view>
+
+    <view class="map-box" bindtap="openMapPreview">
+      <map
+        class="location-map"
+        latitude="{{mapPreview.latitude}}"
+        longitude="{{mapPreview.longitude}}"
+        scale="{{mapPreview.scale}}"
+        markers="{{mapPreview.markers}}"
+        polygons="{{mapPreview.polygons}}"
+        show-location
+        enable-scroll="false"
+        enable-zoom="false"
+      ></map>
+      <view class="map-empty" wx:if="{{!mapPreview.hasLocation}}">凤凰山区域预览</view>
+    </view>
+
+    <view class="coord-panel">
+      <view class="coord-format-switch">
+        <view class="coord-format-label">经纬度格式</view>
+        <view class="coord-format-options">
+          <button class="coord-format-btn {{coordFormat === 'dms' ? 'active' : ''}}" data-format="dms" bindtap="changeCoordFormat">度分秒</button>
+          <button class="coord-format-btn {{coordFormat === 'decimal' ? 'active' : ''}}" data-format="decimal" bindtap="changeCoordFormat">十进制度</button>
+        </view>
+      </view>
+
+      <view class="coord-input-item">
+        <view class="coord-label">经度<text class="required">*</text></view>
+        <input class="coord-input" type="text" value="{{form.longitude}}" placeholder="{{coordFormat === 'dms' ? '如 116°34′44.34″' : '如 116.578983'}}" data-key="longitude" disabled="{{!systemSettings.allowManualLocation}}" bindinput="onLocationInput" />
+      </view>
+      <view class="coord-input-item">
+        <view class="coord-label">纬度<text class="required">*</text></view>
+        <input class="coord-input" type="text" value="{{form.latitude}}" placeholder="{{coordFormat === 'dms' ? '如 23°50′28.21″' : '如 23.841061'}}" data-key="latitude" disabled="{{!systemSettings.allowManualLocation}}" bindinput="onLocationInput" />
+      </view>
+      <view class="coord-input-item">
+        <view class="coord-label">海拔<text class="required">*</text></view>
+        <view class="coord-input-wrap">
+          <input class="coord-input coord-input-with-unit" type="digit" value="{{form.altitude}}" placeholder="手工输入海拔" data-key="altitude" disabled="{{!systemSettings.allowManualLocation}}" bindinput="onLocationInput" />
+          <text class="coord-unit">m</text>
+        </view>
+      </view>
+    </view>
+
+
+    <view class="plot-status {{plotStatus.className}}" wx:if="{{plotStatus.visible}}">
+      <view class="plot-status-title">{{plotStatus.title}}</view>
+      <view class="plot-status-desc">{{plotStatus.desc}}</view>
+      <view class="plot-status-range" wx:if="{{plotStatus.rangeText}}">{{plotStatus.rangeText}}</view>
+      <button class="plot-match-btn" wx:if="{{plotStatus.actionVisible && systemSettings.allowManualLocation}}" bindtap="applyPlotCenter">填入样方中心</button>
+    </view>
+
     <view class="location-actions">
-      <button class="secondary-btn locate-btn" bindtap="getLocation">定位</button>
-      <button class="ghost-btn locate-btn" bindtap="chooseLocation">选点</button>
+      <button class="secondary-btn locate-btn" bindtap="getLocation">自动定位</button>
+      <button class="ghost-btn locate-btn" disabled="{{!systemSettings.allowManualLocation}}" bindtap="chooseLocation">地图选点</button>
     </view>
   </view>
 
@@ -39,14 +91,32 @@
       <view class="section-title">现场照片<text class="required">*</text></view>
       <button class="secondary-btn photo-btn" bindtap="chooseImages">添加照片</button>
     </view>
-    <view class="photo-grid" wx:if="{{form.images.length}}">
-      <view class="photo-item" wx:for="{{form.images}}" wx:key="*this">
-        <image src="{{item}}" mode="aspectFill"></image>
-        <button class="remove-photo" bindtap="removeImage" data-index="{{index}}">×</button>
+    <view class="photo-grid" wx:if="{{imagePreviews.length}}">
+      <view class="photo-item" wx:for="{{imagePreviews}}" wx:key="src">
+        <image class="photo-image" src="{{item.preview}}" mode="widthFix"></image>
+        <button class="photo-corner-btn recognize-photo" loading="{{recognizingPlant}}" disabled="{{recognizingPlant}}" bindtap="recognizePlant" data-index="{{index}}">识别</button>
+        <button class="remove-photo" bindtap="removeImage" data-index="{{index}}">x</button>
       </view>
     </view>
     <view class="muted photo-empty" wx:else>请至少添加 1 张现场照片，最多 6 张</view>
+    <view class="plant-recognition" wx:if="{{plantRecognition.visible}}">
+      <view class="plant-recognition-title">豆包识图候选</view>
+      <view class="plant-recognition-main" wx:if="{{plantRecognition.species}}">{{plantRecognition.species}}</view>
+      <view class="plant-recognition-latin" wx:if="{{plantRecognition.latinName}}">{{plantRecognition.latinName}}</view>
+      <view class="plant-recognition-confidence" wx:if="{{plantRecognition.confidence !== ''}}">置信度 {{plantRecognition.confidence}}</view>
+      <view class="plant-recognition-reason" wx:if="{{plantRecognition.reason}}">{{plantRecognition.reason}}</view>
+      <view class="plant-recognition-candidates" wx:if="{{plantRecognition.candidates.length}}">
+        <view class="candidate-label">候选:</view>
+        <view class="candidate-item" wx:for="{{plantRecognition.candidates}}" wx:for-item="candidate" wx:key="species">{{candidate.species}}</view>
+      </view>
+      <view class="plant-recognition-warning" wx:if="{{plantRecognition.uncertain}}">结果仅供参考. 请结合现场特征人工确认.</view>
+      <view class="plant-recognition-actions" wx:if="{{plantRecognition.species}}">
+        <button class="ghost-btn recognition-action-btn" bindtap="copyPlantRecognition">复制结果</button>
+        <button class="secondary-btn recognition-action-btn" bindtap="applyPlantRecognition">填入表单</button>
+      </view>
+    </view>
   </view>
 
   <button class="primary-btn submit-btn" loading="{{saving}}" bindtap="submitForm">保存树木档案</button>
 </view>
+
