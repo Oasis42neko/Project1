@@ -201,7 +201,7 @@
 - 地图：微信地图组件，使用 GCJ-02 展示。
 - 内容安全：微信云开发文本和图片安全审核接口。
 - 当前 AppID：`wx4f7e68874427e12b`。
-- 当前云环境：`cloudbase-d2gy960gude91a011`。
+- 当前云环境：`d2gy960gude91a011-d1dnd302c93ce9`。
 
 主要集合：
 
@@ -237,7 +237,7 @@
 
 ## 八 云环境释放后的恢复方案
 
-旧环境 `cloud1-d6gur693n29df504b` 已不存在，不能直接恢复原云端数据。当前项目已经切换到新环境 `cloudbase-d2gy960gude91a011`，并重新部署了 `quickstartFunctions`。
+旧环境 `cloud1-d6gur693n29df504b` 已不存在，不能直接恢复原云端数据。当前项目已经切换到新环境 `d2gy960gude91a011-d1dnd302c93ce9`，并重新部署了 `quickstartFunctions`。
 
 恢复步骤：
 
