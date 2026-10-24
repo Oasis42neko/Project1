@@ -4,6 +4,7 @@
     <view class="login-title">森林健康观测</view>
     <view class="login-desc">登录后可查看树木档案、录入样木数据并生成统计导出。</view>
     <button class="primary-btn login-btn" loading="{{logging}}" bindtap="login">微信登录</button>
-    <view class="login-note">系统仅使用微信 openid 识别录入人员，不获取手机号。</view>
+    <button class="phone-login-btn" loading="{{logging}}" disabled="{{logging}}" open-type="getPhoneNumber" bindgetphonenumber="loginByPhone">手机号快捷登录</button>
+    <view class="login-note">普通用户默认使用公众权限，管理员由后台统一设置。</view>
   </view>
 </view>

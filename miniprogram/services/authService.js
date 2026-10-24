@@ -41,6 +41,19 @@ const login = async (profile = {}) => {
   return result.data;
 };
 
+const loginByPhone = async (phoneCode, profile = {}) => {
+  const result = await callForestFunction("loginUser", {
+    loginMethod: "phone",
+    phoneCode,
+    profile,
+  });
+  if (!result.success || !result.data || !result.data.openid) {
+    throw new Error(result.errMsg || "手机号登录失败");
+  }
+  setCachedUser(result.data);
+  return result.data;
+};
+
 const requireLogin = () => {
   const user = getCachedUser();
   if (user) return user;
@@ -52,6 +65,7 @@ module.exports = {
   clearCachedUser,
   getCachedUser,
   login,
+  loginByPhone,
   requireLogin,
   setCachedUser,
 };

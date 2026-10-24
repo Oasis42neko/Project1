@@ -18,4 +18,12 @@
       <view class="module-content"><view class="module-number">{{item.number}}</view><view class="module-title">{{item.title}}</view><view class="module-link">进入板块 <text>→</text></view></view>
     </view>
   </view>
+
+  <view class="knowledge-entry" bindtap="openKnowledge">
+    <view class="knowledge-copy">
+      <view class="knowledge-title">资料知识库</view>
+      <view class="knowledge-subtitle">下载调查规范、数据模板和项目资料</view>
+    </view>
+    <view class="knowledge-action">进入 <text>→</text></view>
+  </view>
 </view>

@@ -63,16 +63,6 @@ const defaultPlotStatus = {
   actionVisible: false,
 };
 
-const defaultPlantRecognition = {
-  visible: false,
-  species: "",
-  latinName: "",
-  confidence: "",
-  reason: "",
-  candidates: [],
-  uncertain: false,
-};
-
 const colorWithAlpha = (hex, alpha) => `${hex}${alpha}`;
 
 const buildPlotCenters = () => getPlotNos().map((plotNo, index) => {
@@ -241,20 +231,6 @@ const buildImagePreviews = (images = []) => images.map((src, index) => ({
   index,
 }));
 
-const buildPlantRecognition = (payload = {}) => {
-  const candidates = Array.isArray(payload.candidates) ? payload.candidates : [];
-  const visible = !!(payload.visible || payload.species || payload.name || payload.latinName || payload.latin_name || payload.reason || payload.description || payload.confidence !== undefined || candidates.length);
-  return {
-    visible,
-    species: payload.species || payload.name || (candidates[0] && candidates[0].species) || "",
-    latinName: payload.latinName || payload.latin_name || "",
-    confidence: payload.confidence !== undefined && payload.confidence !== null ? String(payload.confidence) : "",
-    reason: payload.reason || payload.description || "",
-    candidates,
-    uncertain: !!payload.uncertain,
-  };
-};
-
 Page({
   data: {
     id: "",
@@ -266,8 +242,6 @@ Page({
     mapPreview: defaultMapPreview,
     plotStatus: defaultPlotStatus,
     imagePreviews: [],
-    recognizingPlant: false,
-    plantRecognition: defaultPlantRecognition,
   },
 
   onLoad(query) {
@@ -410,6 +384,12 @@ Page({
       type: "gcj02",
       success: (res) => {
         this.applyLocation(res);
+        treeService.logOperation("location_gps", {
+          title: "自动定位",
+          summary: "树木档案录入使用自动定位",
+          targetType: "treeForm",
+          details: { latitude: res.latitude, longitude: res.longitude },
+        }).catch(() => {});
         wx.showToast({ title: "已获取定位" });
       },
       fail: () => {
@@ -424,6 +404,12 @@ Page({
       longitude: this.data.form.longitude ? parseCoordinateValue(this.data.form.longitude) : undefined,
       success: (res) => {
         this.applyLocation(res);
+        treeService.logOperation("location_select", {
+          title: "地图选点",
+          summary: res.name || res.address || "树木档案录入地图选点",
+          targetType: "treeForm",
+          details: { latitude: res.latitude, longitude: res.longitude },
+        }).catch(() => {});
         const remark = this.data.form.remark || "";
         const locationText = res.name || res.address;
         if (locationText && !remark.includes(locationText)) {
@@ -453,6 +439,13 @@ Page({
     }, () => {
       this.refreshSections();
       this.refreshDerivedState();
+      treeService.logOperation("location_plot_center", {
+        title: "填入样方中心",
+        summary: this.data.form.plotNo || "样方中心坐标",
+        targetType: "plot",
+        targetId: this.data.form.plotNo || "",
+        details: { latitude: center.latitude, longitude: center.longitude },
+      }).catch(() => {});
       wx.showToast({ title: "已填入样方中心" });
     });
   },
@@ -476,58 +469,6 @@ Page({
     this.setData({ "form.images": images }, () => this.refreshDerivedState());
   },
 
-  async recognizePlant(event) {
-    if (this.data.recognizingPlant) return;
-    const index = Number(event.currentTarget.dataset.index);
-    const images = this.data.form.images || [];
-    const image = images[index];
-    if (!image) return;
-    this.setData({ recognizingPlant: true });
-    try {
-      let fileID = image;
-      if (!String(image).startsWith("cloud://")) {
-        const ext = image.includes(".") ? image.slice(image.lastIndexOf(".")) : ".jpg";
-        const upload = await wx.cloud.uploadFile({
-          cloudPath: `forest-health/recognition/${Date.now()}-${index}${ext}`,
-          filePath: image,
-        });
-        fileID = upload.fileID;
-      }
-      const res = await treeService.recognizePlant(fileID);
-      const payload = res.data || {};
-      this.setData({ plantRecognition: buildPlantRecognition(payload) });
-    } catch (error) {
-      wx.showToast({ title: "识别失败", icon: "none" });
-    } finally {
-      this.setData({ recognizingPlant: false });
-    }
-  },
-
-  copyPlantRecognition() {
-    const recognition = this.data.plantRecognition;
-    if (!recognition.visible) return;
-    const parts = [
-      recognition.species,
-      recognition.latinName ? `(${recognition.latinName})` : "",
-      recognition.confidence !== "" ? `置信度 ${recognition.confidence}` : "",
-      recognition.reason,
-    ].filter(Boolean);
-    if (!parts.length) return;
-    wx.setClipboardData({ data: parts.join(" ") });
-  },
-
-  applyPlantRecognition() {
-    const recognition = this.data.plantRecognition;
-    if (!recognition.visible) return;
-    const patch = {};
-    if (recognition.species) patch["form.species"] = recognition.species;
-    if (recognition.latinName) patch["form.latinName"] = recognition.latinName;
-    this.setData(patch, () => {
-      this.refreshSections();
-      this.refreshDerivedState();
-      wx.showToast({ title: "已填入表单" });
-    });
-  },
 
   async uploadImages(record) {
     const images = record.images || [];

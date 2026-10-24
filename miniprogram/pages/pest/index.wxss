@@ -144,25 +144,7 @@
 
 .photo-remove { left: 16rpx; background: rgba(0, 0, 0, 0.58); }
 
-.photo-recognize { right: 16rpx; background: #b7791f; }
-
 .photo-empty { width: 100%; min-height: 118rpx; margin-top: 12rpx; border: 2rpx dashed #d6d6d6; border-radius: 10rpx; color: rgba(0, 0, 0, 0.45); font-size: 25rpx; display: flex; align-items: center; justify-content: center; text-align: center; }
-
-.pest-recognition { margin-top: 16rpx; padding: 20rpx; border-left: 6rpx solid #b7791f; background: #fff8eb; }
-
-.recognition-title { color: #9a6519; font-size: 27rpx; font-weight: 600; }
-
-.recognition-main { margin-top: 10rpx; color: #191919; font-size: 31rpx; font-weight: 600; }
-
-.recognition-meta { margin-top: 8rpx; color: rgba(0, 0, 0, 0.58); font-size: 24rpx; }
-
-.recognition-reason { margin-top: 12rpx; color: rgba(0, 0, 0, 0.65); font-size: 25rpx; line-height: 1.5; }
-
-.recognition-warning { margin-top: 10rpx; color: #9a6519; font-size: 23rpx; line-height: 1.45; }
-
-.recognition-actions { display: flex; }
-
-.recognition-button { height: 68rpx; border-radius: 10rpx; font-size: 25rpx; }
 
 
 .admin-actions {

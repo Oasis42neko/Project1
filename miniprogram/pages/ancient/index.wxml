@@ -97,9 +97,29 @@
     </view>
   </view>
 
+  <view wx:if="{{showIssueForm && selectedTree}}" class="detail-mask" catchtap="closeIssueForm">
+    <view class="issue-sheet panel" catchtap="stop">
+      <view class="sheet-handle"></view>
+      <view class="issue-head">
+        <view>
+          <view class="detail-title">上报古树异常</view>
+          <view class="detail-subtitle">{{selectedTree.treeNo || selectedTree.displayNo}} · {{selectedTree.species}}</view>
+        </view>
+        <button class="close-button" bindtap="closeIssueForm">×</button>
+      </view>
+      <view class="issue-readonly">位置：{{selectedTree.location || '暂无位置'}}</view>
+      <view class="issue-readonly">坐标：{{selectedTree.longitude || '待补'}}，{{selectedTree.latitude || '待补'}}</view>
+      <view class="issue-row" bindtap="chooseIssueType"><text class="issue-label">异常类型</text><text class="issue-value">{{issueForm.issueType}} ›</text></view>
+      <view class="issue-row" bindtap="chooseIssueSeverity"><text class="issue-label">紧急程度</text><text class="issue-value">{{issueForm.severity}} ›</text></view>
+      <textarea class="issue-textarea" value="{{issueForm.description}}" data-key="description" bindinput="inputIssue" placeholder="请填写异常情况，至少5个字符" />
+      <textarea class="issue-textarea issue-remark" value="{{issueForm.remark}}" data-key="remark" bindinput="inputIssue" placeholder="备注（可选）" />
+      <button class="issue-submit" loading="{{issueSaving}}" disabled="{{issueSaving}}" bindtap="submitIssue">提交异常</button>
+    </view>
+  </view>
+
   <view class="pagination-row">
-    <button class="page-btn" disabled="{{page <= 1}}" bindtap="prevPage">上一页</button>
+    <button class="page-btn" disabled="{{loading || page <= 1}}" bindtap="prevPage">上一页</button>
     <view class="page-info">{{page}} / {{pageCount}}</view>
-    <button class="page-btn" disabled="{{page >= pageCount}}" bindtap="nextPage">下一页</button>
+    <button class="page-btn" disabled="{{loading || page >= pageCount}}" bindtap="nextPage">下一页</button>
   </view>
 </view>

@@ -3,6 +3,8 @@ const authService = require("../../services/authService");
 
 const PAGE_SIZE = 15;
 const FILTERS = ["全部", "一级古树", "二级古树", "三级古树"];
+const ISSUE_TYPES = ["健康异常", "病害", "虫害", "人为损伤", "其他"];
+const ISSUE_SEVERITIES = ["一般", "较急", "紧急"];
 
 Page({
   data: {
@@ -25,24 +27,37 @@ Page({
     selectedTree: null,
     showDetail: false,
     canReportIssue: false,
+    showIssueForm: false,
+    issueSaving: false,
+    issueTypes: ISSUE_TYPES,
+    issueSeverities: ISSUE_SEVERITIES,
+    issueForm: {
+      issueType: ISSUE_TYPES[0],
+      severity: ISSUE_SEVERITIES[0],
+      description: "",
+      remark: "",
+    },
   },
 
   onLoad() {
     const user = authService.getCachedUser();
-    this.setData({ canReportIssue: !!(user && user.role === "admin") });
+    this.setData({ canReportIssue: !!user });
     this.loadTrees();
   },
 
   async loadTrees() {
+    const requestId = (this._listRequestId || 0) + 1;
+    this._listRequestId = requestId;
     this.setData({ loading: true });
     try {
-      const result = await treeService.listTrees({
+      const result = await treeService.listAncientTrees({
         page: this.data.page,
         pageSize: this.data.pageSize,
         keyword: this.data.keyword,
         level: this.data.activeFilter,
       });
       const data = result.data || {};
+      if (requestId !== this._listRequestId) return;
       const trees = (data.data || []).map((tree) => {
         const hasLocation = !!(tree.latitude && tree.longitude);
         const status = !tree.status || String(tree.status).indexOf("?") >= 0
@@ -70,11 +85,12 @@ Page({
         },
       });
     } catch (error) {
+      if (requestId !== this._listRequestId) return;
       console.error("load ancient trees failed", error);
       wx.showToast({ title: "古树数据加载失败", icon: "none" });
       this.setData({ trees: [], total: 0, filteredCount: 0, pageCount: 1, grandTotal: 0 });
     } finally {
-      this.setData({ loading: false });
+      if (requestId === this._listRequestId) this.setData({ loading: false });
     }
   },
 
@@ -100,11 +116,13 @@ Page({
   },
 
   prevPage() {
+    if (this.data.loading) return;
     if (this.data.page <= 1) return;
     this.setData({ page: this.data.page - 1 }, () => this.loadTrees());
   },
 
   nextPage() {
+    if (this.data.loading) return;
     if (this.data.page >= this.data.pageCount) return;
     this.setData({ page: this.data.page + 1 }, () => this.loadTrees());
   },
@@ -163,27 +181,87 @@ Page({
 
   reportIssue() {
     const user = authService.getCachedUser();
-    if (!user || user.role !== "admin") {
-      wx.showToast({ title: "仅管理员可上报异常", icon: "none" });
+    if (!user) {
+      authService.requireLogin();
       return;
     }
+    this.setData({
+      showIssueForm: true,
+      issueForm: {
+        issueType: ISSUE_TYPES[0],
+        severity: ISSUE_SEVERITIES[0],
+        description: "",
+        remark: "",
+      },
+    });
+  },
+
+  closeIssueForm() {
+    if (this.data.issueSaving) return;
+    this.setData({ showIssueForm: false });
+  },
+
+  inputIssue(event) {
+    const key = event.currentTarget.dataset.key;
+    const update = {};
+    update["issueForm." + key] = event.detail.value;
+    this.setData(update);
+  },
+
+  chooseIssueType() {
+    wx.showActionSheet({
+      itemList: ISSUE_TYPES,
+      success: (res) => this.setData({ "issueForm.issueType": ISSUE_TYPES[res.tapIndex] }),
+    });
+  },
+
+  chooseIssueSeverity() {
+    wx.showActionSheet({
+      itemList: ISSUE_SEVERITIES,
+      success: (res) => this.setData({ "issueForm.severity": ISSUE_SEVERITIES[res.tapIndex] }),
+    });
+  },
+
+  async submitIssue() {
     const tree = this.data.selectedTree || {};
-    const params = {
-      from: "ancient",
-      treeNo: tree.treeNo || tree.displayNo || "",
-      species: tree.species || "",
-      location: tree.location || "",
-      latitude: tree.latitude || "",
-      longitude: tree.longitude || "",
-      altitude: tree.altitude || "",
-    };
-    const query = Object.keys(params)
-      .filter((key) => params[key] !== "" && params[key] !== undefined && params[key] !== null)
-      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(String(params[key]))}`)
-      .join("&");
-    this.closeDetail();
-    wx.showToast({ title: "已打开上报入口", icon: "none" });
-    setTimeout(() => wx.navigateTo({ url: `/pages/pest/index?${query}` }), 350);
+    const form = this.data.issueForm || {};
+    const description = String(form.description || "").trim();
+    const location = String(tree.location || "").trim();
+    if (!tree.treeNo && !tree.displayNo) {
+      wx.showToast({ title: "古树编号缺失", icon: "none" });
+      return;
+    }
+    if (!location) {
+      wx.showToast({ title: "古树位置为空，无法提交", icon: "none" });
+      return;
+    }
+    if (description.length < 5) {
+      wx.showToast({ title: "异常情况至少填写5个字符", icon: "none" });
+      return;
+    }
+    if (this.data.issueSaving) return;
+    this.setData({ issueSaving: true });
+    wx.showLoading({ title: "提交中" });
+    try {
+      await treeService.saveAncientIssue({
+        treeNo: tree.treeNo || tree.displayNo,
+        species: tree.species || "",
+        location,
+        latitude: tree.latitude || "",
+        longitude: tree.longitude || "",
+        issueType: form.issueType,
+        severity: form.severity,
+        description,
+        remark: String(form.remark || "").trim(),
+      });
+      this.setData({ showIssueForm: false, showDetail: false });
+      wx.showToast({ title: "已提交，管理员可查看", icon: "success" });
+    } catch (error) {
+      wx.showModal({ title: "提交失败", content: error.message || "请稍后重试", showCancel: false });
+    } finally {
+      wx.hideLoading();
+      this.setData({ issueSaving: false });
+    }
   },
 
   goMap() {

@@ -35,3 +35,10 @@
 .module-link { margin-top: 6rpx; color: #ffffff; font-size: 16rpx; white-space: nowrap; }
 
 .module-link text { margin-left: 4rpx; font-size: 16rpx; }
+
+.knowledge-entry { margin: 16rpx 0 0; min-height: 96rpx; padding: 0 24rpx; display: flex; align-items: center; justify-content: space-between; border-radius: 14rpx; background: rgba(255, 255, 255, 0.9); color: #1d7a4d; box-shadow: 0 8rpx 24rpx rgba(31, 74, 47, 0.08); }
+.knowledge-copy { min-width: 0; }
+.knowledge-title { color: #1f5e3e; font-size: 30rpx; font-weight: 600; }
+.knowledge-subtitle { margin-top: 6rpx; color: rgba(0, 0, 0, 0.5); font-size: 22rpx; }
+.knowledge-action { flex: 0 0 auto; margin-left: 20rpx; font-size: 25rpx; }
+.knowledge-action text { margin-left: 6rpx; font-size: 28rpx; }

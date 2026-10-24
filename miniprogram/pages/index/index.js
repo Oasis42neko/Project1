@@ -24,4 +24,8 @@ Page({
     if (key === "ancient") return wx.navigateTo({ url: "/pages/ancient/index" });
     if (key === "pest") return wx.navigateTo({ url: "/pages/pest/index" });
   },
+
+  openKnowledge() {
+    wx.navigateTo({ url: "/pages/knowledge/index" });
+  },
 });

@@ -1,0 +1,43 @@
+.knowledge-page { padding-bottom: 56rpx; }
+.page-intro { min-height: 150rpx; padding: 24rpx; display: flex; align-items: flex-start; justify-content: space-between; }
+.eyebrow { color: #1d7a4d; font-size: 24rpx; font-weight: 600; }
+.page-title { margin-top: 8rpx; color: #191919; font-size: 42rpx; font-weight: 600; }
+.page-subtitle { margin-top: 10rpx; color: rgba(0, 0, 0, 0.52); font-size: 25rpx; line-height: 1.45; }
+.manage-button { flex: 0 0 112rpx; width: 112rpx; height: 64rpx; margin-left: 16rpx; border-radius: 12rpx; color: #1d7a4d; background: rgba(29, 122, 77, 0.1); font-size: 26rpx; }
+.search-bar { margin-top: 18rpx; padding: 10rpx 14rpx; display: flex; align-items: center; }
+.search-input { flex: 1; min-width: 0; height: 68rpx; font-size: 26rpx; }
+.search-clear { width: 92rpx; height: 60rpx; margin-left: 12rpx; border-radius: 10rpx; color: #1d7a4d; background: rgba(29, 122, 77, 0.08); font-size: 24rpx; }
+.category-scroll { margin-top: 18rpx; white-space: nowrap; }
+.category-list { display: inline-flex; min-width: 100%; }
+.category-pill { height: 64rpx; margin-right: 12rpx; padding: 0 24rpx; display: inline-flex; align-items: center; justify-content: center; border-radius: 32rpx; color: rgba(0, 0, 0, 0.55); background: #fff; font-size: 25rpx; }
+.category-pill.active { color: #fff; background: #1d7a4d; }
+.section-head { margin: 34rpx 8rpx 16rpx; display: flex; align-items: flex-end; justify-content: space-between; }
+.section-title { color: #191919; font-size: 34rpx; font-weight: 600; }
+.section-subtitle, .result-count { margin-top: 6rpx; color: rgba(0, 0, 0, 0.5); font-size: 24rpx; }
+.result-count { margin-top: 0; }
+.file-list { display: flex; flex-direction: column; gap: 14rpx; }
+.file-item { min-height: 126rpx; padding: 20rpx; display: flex; align-items: center; }
+.file-icon { width: 76rpx; height: 76rpx; flex: 0 0 76rpx; display: flex; align-items: center; justify-content: center; border-radius: 12rpx; color: #1d7a4d; background: #eaf7ef; font-size: 18rpx; font-weight: 700; }
+.file-main { min-width: 0; flex: 1; margin: 0 16rpx; }
+.file-name { color: #191919; font-size: 28rpx; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-meta { margin-top: 8rpx; display: flex; flex-direction: column; gap: 4rpx; color: rgba(0, 0, 0, 0.5); font-size: 22rpx; line-height: 1.35; }
+.file-meta text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.download-button, .delete-button { flex: 0 0 86rpx; width: 86rpx; height: 60rpx; padding: 0; border-radius: 10rpx; font-size: 23rpx; }
+.download-button { color: #fff; background: #1d7a4d; }
+.delete-button { margin-left: 10rpx; color: #fa5151; background: rgba(250, 81, 81, 0.1); }
+.empty-panel { margin-top: 16rpx; padding: 70rpx 24rpx; text-align: center; color: rgba(0, 0, 0, 0.46); font-size: 27rpx; background: rgba(255, 255, 255, 0.78); border-radius: 16rpx; }
+.pagination-row { margin-top: 18rpx; display: flex; align-items: center; justify-content: space-between; }
+.page-button { width: 150rpx; height: 70rpx; border-radius: 12rpx; color: #1d7a4d; background: rgba(29, 122, 77, 0.08); font-size: 25rpx; }
+.page-info { color: rgba(0, 0, 0, 0.52); font-size: 24rpx; }
+.upload-mask { position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-end; justify-content: center; background: rgba(0, 0, 0, 0.28); }
+.upload-sheet { width: 100%; padding: 30rpx 28rpx 36rpx; border-radius: 24rpx 24rpx 0 0; }
+.sheet-title { color: #191919; font-size: 36rpx; font-weight: 600; }
+.sheet-subtitle { margin-top: 8rpx; color: rgba(0, 0, 0, 0.5); font-size: 24rpx; }
+.choose-file-button { margin-top: 24rpx; height: 76rpx; padding: 0 22rpx; display: flex; align-items: center; justify-content: flex-start; overflow: hidden; border-radius: 12rpx; color: #1d7a4d; background: #eaf7ef; font-size: 26rpx; white-space: nowrap; text-overflow: ellipsis; }
+.upload-input, .upload-textarea { width: 100%; margin-top: 16rpx; padding: 0 20rpx; border-radius: 12rpx; color: #191919; background: #f7f8fa; font-size: 26rpx; }
+.upload-input { height: 72rpx; }
+.upload-textarea { min-height: 140rpx; padding-top: 18rpx; }
+.sheet-actions { margin-top: 24rpx; display: flex; gap: 14rpx; }
+.cancel-button, .confirm-button { flex: 1; height: 78rpx; border-radius: 12rpx; font-size: 27rpx; }
+.cancel-button { color: #2b2f36; background: #eef2f4; }
+.confirm-button { color: #fff; background: #1d7a4d; }

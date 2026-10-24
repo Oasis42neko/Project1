@@ -9,7 +9,9 @@
     "pages/form/index",
     "pages/users/index",
     "pages/ancient/index",
-    "pages/pest/index"
+    "pages/pest/index",
+    "pages/knowledge/index",
+    "pages/inbox/index"
   ],
   "window": {
     "backgroundColor": "#F7F7F7",

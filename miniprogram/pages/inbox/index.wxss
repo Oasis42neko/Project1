@@ -1,0 +1,25 @@
+.inbox-page { padding-bottom: 56rpx; }
+.page-intro { display: flex; align-items: flex-start; justify-content: space-between; padding: 28rpx; }
+.eyebrow { color: #1d7a4d; font-size: 24rpx; font-weight: 600; }
+.page-title { margin-top: 8rpx; color: #191919; font-size: 42rpx; font-weight: 600; }
+.page-subtitle { max-width: 500rpx; margin-top: 10rpx; color: rgba(0, 0, 0, 0.52); font-size: 25rpx; line-height: 1.5; }
+.export-button { width: 132rpx; height: 68rpx; flex: 0 0 132rpx; padding: 0; color: #ffffff; background: #1d7a4d; border-radius: 10rpx; font-size: 26rpx; }
+.inbox-tabs { display: flex; margin-top: 20rpx; border-bottom: 1rpx solid #e7e9ea; }
+.inbox-tab { flex: 1; padding: 20rpx 0; color: #7c858b; text-align: center; font-size: 27rpx; }
+.inbox-tab.active { color: #1d7a4d; border-bottom: 4rpx solid #1d7a4d; font-weight: 600; }
+.search-bar { margin-top: 18rpx; padding: 10rpx 14rpx; display: flex; align-items: center; }
+.search-input { flex: 1; min-width: 0; height: 68rpx; font-size: 26rpx; }
+.search-clear { width: 92rpx; height: 60rpx; margin-left: 10rpx; padding: 0; color: #687177; background: #f0f2f3; border-radius: 8rpx; font-size: 23rpx; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin: 22rpx 4rpx 12rpx; }
+.section-title { color: #202529; font-size: 32rpx; font-weight: 600; }
+.result-count { color: #7b858b; font-size: 24rpx; }
+.message-card { margin-top: 14rpx; padding: 24rpx; }
+.message-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16rpx; }
+.message-title { min-width: 0; color: #202529; font-size: 29rpx; font-weight: 600; }
+.message-time { flex-shrink: 0; color: #92999e; font-size: 21rpx; }
+.message-summary { margin-top: 12rpx; color: #4e575c; font-size: 25rpx; line-height: 1.5; word-break: break-all; }
+.message-actor, .message-detail, .issue-detail { margin-top: 10rpx; color: #899196; font-size: 23rpx; line-height: 1.55; word-break: break-all; }
+.issue-detail { padding: 14rpx 16rpx; color: #596269; background: #f7f8f8; border-radius: 8rpx; }
+.pagination-row { display: flex; align-items: center; justify-content: center; margin-top: 24rpx; }
+.page-button { width: 170rpx; height: 68rpx; padding: 0; color: #1d7a4d; background: #edf5f0; border-radius: 10rpx; font-size: 24rpx; }
+.page-info { min-width: 120rpx; color: #737d83; text-align: center; font-size: 24rpx; }

@@ -1,0 +1,53 @@
+<view class="safe-page inbox-page">
+  <view class="page-intro panel">
+    <view>
+      <view class="eyebrow">管理员专属</view>
+      <view class="page-title">站内信</view>
+      <view class="page-subtitle">记录录入、上传、下载、定位和导出等操作，不记录普通浏览。</view>
+    </view>
+    <button class="export-button" loading="{{exporting}}" disabled="{{exporting}}" bindtap="exportCurrent">导出</button>
+  </view>
+
+  <view class="inbox-tabs">
+    <view class="inbox-tab {{activeType === 'operation' ? 'active' : ''}}" data-type="operation" bindtap="chooseType">操作记录</view>
+    <view class="inbox-tab {{activeType === 'ancientIssue' ? 'active' : ''}}" data-type="ancientIssue" bindtap="chooseType">古树异常</view>
+  </view>
+
+  <view class="search-bar panel">
+    <input class="search-input" value="{{keyword}}" placeholder="{{activeType === 'operation' ? '搜索操作、对象或操作人' : '搜索编号、树种、异常描述'}}" confirm-type="search" bindinput="inputKeyword" bindconfirm="confirmKeyword" />
+    <button wx:if="{{keyword}}" class="search-clear" bindtap="clearKeyword">清除</button>
+  </view>
+
+  <view class="section-head">
+    <view class="section-title">{{activeType === 'operation' ? '操作记录' : '古树异常上报'}}</view>
+    <view class="result-count">{{total}} 条</view>
+  </view>
+
+  <view wx:if="{{messages.length}}" class="message-list">
+    <view class="message-card panel" wx:for="{{messages}}" wx:for-item="message" wx:key="id">
+      <view class="message-head">
+        <view class="message-title">{{message.title}}</view>
+        <view class="message-time">{{message.createdAtText}}</view>
+      </view>
+      <view class="message-summary">{{message.summary}}</view>
+      <view class="message-actor">操作人：{{message.actorName || message.actorOpenid}}</view>
+      <view wx:if="{{activeType === 'operation'}}" class="message-detail">
+        {{message.targetType}} {{message.targetId}}
+      </view>
+      <view wx:else class="issue-detail">
+        <view>编号：{{message.details.treeNo}}</view>
+        <view>类型：{{message.details.issueType}} · 紧急程度：{{message.details.severity}}</view>
+        <view>位置：{{message.details.location}}</view>
+        <view>描述：{{message.details.description}}</view>
+        <view wx:if="{{message.details.remark}}">备注：{{message.details.remark}}</view>
+      </view>
+    </view>
+  </view>
+  <view wx:else class="empty-panel">{{loading ? '加载中' : '暂无记录'}}</view>
+
+  <view class="pagination-row">
+    <button class="page-button" disabled="{{loading || page <= 1}}" bindtap="previousPage">上一页</button>
+    <view class="page-info">{{page}} / {{pageCount}}</view>
+    <button class="page-button" disabled="{{loading || page >= pageCount}}" bindtap="nextPage">下一页</button>
+  </view>
+</view>

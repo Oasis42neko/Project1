@@ -5,9 +5,10 @@ Page({
   data: {
     loading: false,
     exporting: false,
+    ancientImporting: false,
+    ancientImportProgress: 0,
     user: null,
     canManage: false,
-    seeding: false,
     summary: {
       total: 0,
       plots: 0,
@@ -44,6 +45,14 @@ Page({
     wx.navigateTo({ url: "/pages/users/index" });
   },
 
+  goAncient() {
+    wx.navigateTo({ url: "/pages/ancient/index" });
+  },
+
+  goInbox() {
+    wx.navigateTo({ url: "/pages/inbox/index" });
+  },
+
   async exportCsv() {
     this.setData({ exporting: true });
     wx.showLoading({ title: "导出中" });
@@ -59,40 +68,56 @@ Page({
     }
   },
 
-
-
-  async seedDemoData() {
+  async restoreAncientTrees() {
     const modal = await new Promise((resolve) => {
       wx.showModal({
-        title: "导入演示数据",
-        content: "将生成 45 条测试树木档案，包含在线测试图片。仅管理员可操作。",
+        title: "恢复古树名木",
+        content: "将从正式数据恢复 2300 条古树名木档案，已存在的编号会被更新。仅管理员可操作。",
         confirmColor: "#07C160",
         success: resolve,
       });
     });
     if (!modal.confirm) return;
 
-    this.setData({ seeding: true });
-    wx.showLoading({ title: "导入中" });
+    this.setData({ ancientImporting: true, ancientImportProgress: 0 });
+    wx.showLoading({ title: "恢复中 0%" });
+    let offset = 0;
+    let total = 2300;
+    let imported = 0;
     try {
-      const res = await treeService.seedDemoData();
+      while (offset < total) {
+        const res = await treeService.importAncientTrees({ offset, limit: 50 });
+        const payload = res.data || {};
+        total = Number(payload.total || total);
+        const nextOffset = Number(payload.nextOffset);
+        if (!Number.isFinite(nextOffset) || nextOffset <= offset) {
+          throw new Error("恢复进度异常，请稍后重试");
+        }
+        imported += Number(payload.inserted || 0);
+        offset = nextOffset;
+        const progress = Math.min(100, Math.round((offset / total) * 100));
+        this.setData({ ancientImportProgress: progress });
+        wx.showLoading({ title: `恢复中 ${progress}%` });
+      }
       wx.showModal({
-        title: "导入完成",
-        content: res.data.message || `已导入 ${res.data.inserted} 条演示数据`,
+        title: "恢复完成",
+        content: `已恢复 ${imported} 条古树名木档案。`,
         showCancel: false,
       });
-      this.loadStats();
     } catch (error) {
       wx.showModal({
-        title: "导入失败",
+        title: "恢复失败",
         content: error.message || "请确认当前用户是管理员，并已重新部署云函数。",
         showCancel: false,
       });
     } finally {
       wx.hideLoading();
-      this.setData({ seeding: false });
+      this.setData({ ancientImporting: false });
+      this.loadStats();
     }
   },
+
+
 
   downloadExport() {
     if (!this.data.exportFileID) return;

@@ -14,12 +14,17 @@ const callForestFunction = (type, data = {}) => wx.cloud.callFunction({
 
 const initProject = () => callForestFunction("initForestProject");
 const listTrees = (params) => callForestFunction("listTrees", params);
+const listAncientTrees = (params) => callForestFunction("listAncientTrees", params);
+const getAncientTree = (id) => callForestFunction("getAncientTree", { id });
+const importAncientTrees = (params) => callForestFunction("importAncientTrees", params);
+const listKnowledgeFiles = (params) => callForestFunction("listKnowledgeFiles", params);
+const saveKnowledgeFile = (file) => callForestFunction("saveKnowledgeFile", { file });
+const deleteKnowledgeFile = (id) => callForestFunction("deleteKnowledgeFile", { id });
 const getTree = (id) => callForestFunction("getTree", { id });
 const saveTree = (record) => callForestFunction("saveTree", { record });
 const deleteTree = (id) => callForestFunction("deleteTree", { id });
 const getStats = () => callForestFunction("statsTrees");
 const exportTrees = () => callForestFunction("exportTrees");
-const seedDemoData = () => callForestFunction("seedDemoData");
 const listUsers = () => callForestFunction("listUsers");
 const updateUserRole = (userId, role) => callForestFunction("updateUserRole", { userId, role });
 const getSystemSettings = () => callForestFunction("getSystemSettings");
@@ -27,8 +32,17 @@ const updateSystemSettings = (settings) => callForestFunction("updateSystemSetti
 const updateMyLocation = (location) => callForestFunction("updateMyLocation", location);
 const setMyLocationOffline = () => callForestFunction("setMyLocationOffline");
 const listUserLocations = () => callForestFunction("listUserLocations");
-const recognizePlant = (fileID) => callForestFunction("recognizePlant", { fileID });
-const recognizePest = (fileID) => callForestFunction("recognizePest", { fileID });
+const logOperation = (action, details = {}) => callForestFunction("logOperation", {
+  action,
+  title: details.title || action,
+  summary: details.summary || "",
+  targetType: details.targetType || "",
+  targetId: details.targetId || "",
+  details: details.details || {},
+});
+const saveAncientIssue = (issue) => callForestFunction("saveAncientIssue", { issue });
+const listAdminMessages = (params) => callForestFunction("listAdminMessages", params);
+const exportAdminMessages = (messageType) => callForestFunction("exportAdminMessages", { messageType });
 
 module.exports = {
   deleteTree,
@@ -36,13 +50,20 @@ module.exports = {
   getStats,
   getSystemSettings,
   getTree,
+  getAncientTree,
+  importAncientTrees,
   initProject,
+  listKnowledgeFiles,
+  listAncientTrees,
   listTrees,
   listUserLocations,
-  recognizePlant,
-  recognizePest,
+  logOperation,
+  saveAncientIssue,
+  listAdminMessages,
+  exportAdminMessages,
   saveTree,
-  seedDemoData,
+  saveKnowledgeFile,
+  deleteKnowledgeFile,
   setMyLocationOffline,
   listUsers,
   updateMyLocation,

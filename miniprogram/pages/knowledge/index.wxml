@@ -1,0 +1,62 @@
+<view class="safe-page knowledge-page">
+  <view class="page-intro panel">
+    <view>
+      <view class="eyebrow">项目资料</view>
+      <view class="page-title">资料知识库</view>
+      <view class="page-subtitle">集中查看和下载调查规范、数据模板及项目文件。</view>
+    </view>
+    <button wx:if="{{canManage}}" class="manage-button" bindtap="openUpload">上传</button>
+  </view>
+
+  <view class="search-bar panel">
+    <input class="search-input" value="{{keyword}}" placeholder="搜索文件名、分类或说明" confirm-type="search" bindinput="onKeywordInput" bindconfirm="onKeywordConfirm" />
+    <button wx:if="{{keyword}}" class="search-clear" bindtap="clearKeyword">清除</button>
+  </view>
+
+  <scroll-view class="category-scroll" scroll-x>
+    <view class="category-list">
+      <view wx:for="{{categories}}" wx:key="*this" wx:for-item="item" class="category-pill {{category === item ? 'active' : ''}}" data-category="{{item}}" bindtap="chooseCategory">{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="section-head">
+    <view>
+      <view class="section-title">可下载资料</view>
+      <view class="section-subtitle">共 {{total}} 个文件</view>
+    </view>
+    <view class="result-count">{{page}} / {{pageCount}} 页</view>
+  </view>
+
+  <view wx:if="{{files.length}}" class="file-list">
+    <view class="file-item panel" wx:for="{{files}}" wx:for-item="file" wx:key="id">
+      <view class="file-icon">{{file.extension}}</view>
+      <view class="file-main">
+        <view class="file-name">{{file.name}}</view>
+        <view class="file-meta"><text>{{file.category}}</text><text wx:if="{{file.description}}">{{file.description}}</text></view>
+      </view>
+      <button class="download-button" loading="{{file.downloading}}" bindtap="downloadFile" data-file="{{file}}">下载</button>
+      <button wx:if="{{canManage}}" class="delete-button" loading="{{deleting}}" bindtap="deleteFile" data-file="{{file}}">删除</button>
+    </view>
+  </view>
+  <view wx:else class="empty-panel">暂无资料，管理员上传后会显示在这里</view>
+
+  <view class="pagination-row" wx:if="{{pageCount > 1}}">
+    <button class="page-button" disabled="{{page <= 1}}" bindtap="previousPage">上一页</button>
+    <view class="page-info">{{page}} / {{pageCount}}</view>
+    <button class="page-button" disabled="{{page >= pageCount}}" bindtap="nextPage">下一页</button>
+  </view>
+</view>
+
+<view wx:if="{{showUpload}}" class="upload-mask" catchtap="closeUpload">
+  <view class="upload-sheet panel" catchtap="stop">
+    <view class="sheet-title">上传资料</view>
+    <view class="sheet-subtitle">文件上传后，所有登录用户都可以下载。</view>
+    <button class="choose-file-button" bindtap="chooseMessageFile">{{uploadName || '从聊天中选择文件'}}</button>
+    <input class="upload-input" value="{{uploadCategory}}" data-key="uploadCategory" bindinput="onUploadInput" placeholder="分类，如：调查资料" />
+    <textarea class="upload-textarea" value="{{uploadDescription}}" data-key="uploadDescription" bindinput="onUploadInput" placeholder="文件说明（可选）" />
+    <view class="sheet-actions">
+      <button class="cancel-button" bindtap="closeUpload">取消</button>
+      <button class="confirm-button" loading="{{uploading}}" bindtap="submitUpload">上传发布</button>
+    </view>
+  </view>
+</view>

@@ -32,18 +32,6 @@ const uploadCloudFileWithRetry = async (options, retryCount = 2) => {
   throw lastError;
 };
 
-const emptyRecognition = () => ({
-  visible: false,
-  category: "",
-  name: "",
-  severity: "",
-  confidence: "",
-  description: "",
-  reason: "",
-  candidates: [],
-  uncertain: false,
-});
-
 const emptyForm = () => ({
   type: PEST_TYPE_DISEASE,
   severity: SEVERITY_GENERAL,
@@ -60,48 +48,6 @@ const emptyForm = () => ({
   relatedTreeNo: "",
   relatedSpecies: "",
 });
-
-const DEMO_REPORTS = [
-  {
-    id: "PST-202608-001",
-    type: PEST_TYPE_DISEASE,
-    title: "\u53f6\u7247\u51fa\u73b0\u8910\u8272\u6591\u5757",
-    location: "\u6f6e\u5b89\u533a\u51e4\u51f0\u9547",
-    status: STATUS_PENDING,
-    statusClass: "pending",
-    severity: SEVERITY_GENERAL,
-    date: "2026-08-12",
-    image: "/assets/home/forest-pest.jpg",
-    images: ["/assets/home/forest-pest.jpg"],
-    description: "\u73b0\u573a\u53d1\u73b0\u90e8\u5206\u53f6\u7247\u6709\u4e0d\u89c4\u5219\u8910\u8272\u6591\u5757\uff0c\u9700\u8981\u5b89\u6392\u4eba\u5458\u590d\u6838\u3002",
-  },
-  {
-    id: "PST-202608-002",
-    type: PEST_TYPE_INSECT,
-    title: "\u6811\u5e72\u53d1\u73b0\u866b\u5bb3\u5b54\u6d1e",
-    location: "\u9976\u5e73\u53bf\u51e4\u51f0\u5c71\u7247\u533a",
-    status: STATUS_ACCEPTED,
-    statusClass: "accepted",
-    severity: SEVERITY_MODERATE,
-    date: "2026-08-09",
-    image: "/assets/home/forest-pest.jpg",
-    images: ["/assets/home/forest-pest.jpg"],
-    description: "\u6811\u5e72\u4e0b\u90e8\u53d1\u73b0\u591a\u4e2a\u5b54\u6d1e\uff0c\u5468\u56f4\u6709\u6728\u5c51\uff0c\u5efa\u8bae\u5c3d\u5feb\u73b0\u573a\u786e\u8ba4\u3002",
-  },
-  {
-    id: "PST-202608-003",
-    type: PEST_TYPE_DISEASE,
-    title: "\u679d\u68a2\u67af\u840e",
-    location: "\u6e58\u6865\u533a\u610f\u6eaa\u9547",
-    status: STATUS_CLOSED,
-    statusClass: "closed",
-    severity: SEVERITY_GENERAL,
-    date: "2026-08-02",
-    image: "/assets/home/forest-pest.jpg",
-    images: ["/assets/home/forest-pest.jpg"],
-    description: "\u5df2\u5b8c\u6210\u73b0\u573a\u590d\u6838\u548c\u4fee\u679d\u5904\u7406\uff0c\u540e\u7eed\u7ee7\u7eed\u89c2\u5bdf\u3002",
-  },
-];
 
 const decodeOption = (value) => {
   try {
@@ -129,12 +75,10 @@ Page({
     showDetail: false,
     showForm: false,
     loadingReports: false,
-    recognizingPest: false,
     savingReport: false,
     locating: false,
     locationHint: "",
     canManageReports: false,
-    pestRecognition: emptyRecognition(),
     form: emptyForm(),
   },
 
@@ -190,26 +134,15 @@ Page({
       const data = result.data || {};
       const reports = data.data && data.data.length
         ? await this.resolveReportImages(data.data)
-        : this.filterDemoReports(filter);
+        : [];
       this.setData({ reports });
     } catch (error) {
       console.error("load pest reports failed", error);
       wx.showToast({ title: "\u75c5\u866b\u5bb3\u6570\u636e\u52a0\u8f7d\u5931\u8d25", icon: "none" });
-      this.setData({ reports: this.filterDemoReports(filter) });
+      this.setData({ reports: [] });
     } finally {
       this.setData({ loadingReports: false });
     }
-  },
-
-  filterDemoReports(filter) {
-    let reports = DEMO_REPORTS;
-    if (filter === PEST_TYPE_DISEASE || filter === PEST_TYPE_INSECT) {
-      reports = reports.filter((report) => report.type === filter);
-    }
-    if (filter === "\u5f85\u5904\u7406") {
-      reports = reports.filter((report) => [STATUS_PENDING, STATUS_ACCEPTED].includes(report.status));
-    }
-    return reports;
   },
 
   async resolveReportImages(reports) {
@@ -331,6 +264,12 @@ Page({
           const accuracy = Number(res.accuracy || 0);
           const altitude = Number(res.altitude || 0);
           const coordinateText = formatCoordinatePair(latitude, longitude);
+          treeService.logOperation("location_gps", {
+            title: "病虫害上报自动定位",
+            summary: "病虫害上报使用自动定位",
+            targetType: "pestReport",
+            details: { latitude, longitude },
+          }).catch(() => {});
           this.setData({
             "form.location": `\u5f53\u524d\u4f4d\u7f6e\uff08${coordinateText}\uff09`,
             "form.latitude": latitude,
@@ -358,6 +297,12 @@ Page({
           const latitude = Number(res.latitude);
           const longitude = Number(res.longitude);
           const coordinateText = formatCoordinatePair(latitude, longitude);
+          treeService.logOperation("location_select", {
+            title: "病虫害上报地图选点",
+            summary: res.name || res.address || "病虫害上报地图选点",
+            targetType: "pestReport",
+            details: { latitude, longitude },
+          }).catch(() => {});
           this.setData({
             "form.location": res.name || res.address || `\u5730\u56fe\u4f4d\u7f6e\uff08${coordinateText}\uff09`,
             "form.latitude": latitude,
@@ -393,7 +338,6 @@ Page({
           "form.image": file.tempFilePath,
           "form.uploadedFileId": "",
           "form.uploadedLocalPath": "",
-          pestRecognition: emptyRecognition(),
         });
       },
     });
@@ -404,7 +348,6 @@ Page({
       "form.image": "",
       "form.uploadedFileId": "",
       "form.uploadedLocalPath": "",
-      pestRecognition: emptyRecognition(),
     });
   },
 
@@ -430,66 +373,6 @@ Page({
     return upload.fileID;
   },
 
-  async recognizePest() {
-    if (!this.data.form.image || this.data.recognizingPest) {
-      if (!this.data.form.image) wx.showToast({ title: "\u8bf7\u5148\u6dfb\u52a0\u73b0\u573a\u7167\u7247", icon: "none" });
-      return;
-    }
-    this.setData({ recognizingPest: true });
-    wx.showLoading({ title: "\u8bc6\u522b\u75c5\u866b\u5bb3\u4e2d" });
-    try {
-      const fileID = await this.uploadPhoto(this.data.form.image);
-      const result = await treeService.recognizePest(fileID);
-      this.setData({ pestRecognition: { ...emptyRecognition(), ...(result.data || {}), visible: true } });
-    } catch (error) {
-      wx.showModal({
-        title: "\u8bc6\u522b\u5931\u8d25",
-        content: error.message || "\u6682\u65f6\u65e0\u6cd5\u5b8c\u6210\u75c5\u866b\u5bb3\u8bc6\u522b\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002",
-        showCancel: false,
-      });
-    } finally {
-      wx.hideLoading();
-      this.setData({ recognizingPest: false });
-    }
-  },
-
-  normalizeSeverity(value) {
-    const text = String(value || "");
-    if (text.includes(SEVERITY_URGENT) || text.includes("\u4e25\u91cd")) return SEVERITY_URGENT;
-    if (text.includes(SEVERITY_MODERATE) || text.includes("\u4e2d\u5ea6")) return SEVERITY_MODERATE;
-    return SEVERITY_GENERAL;
-  },
-
-  applyPestRecognition() {
-    const result = this.data.pestRecognition || {};
-    const candidate = result.name || (result.candidates && result.candidates[0] && result.candidates[0].name) || "";
-    const category = [PEST_TYPE_DISEASE, PEST_TYPE_INSECT].includes(result.category)
-      ? result.category
-      : this.data.form.type;
-    const line = [candidate ? `${category}：${candidate}` : "", result.description || result.reason || ""]
-      .filter(Boolean)
-      .join("。 ");
-    const description = [this.data.form.description, line].filter(Boolean).join("\n");
-    this.setData({
-      "form.type": category,
-      "form.severity": this.normalizeSeverity(result.severity),
-      "form.description": description,
-      "pestRecognition.visible": false,
-    });
-    wx.showToast({ title: "\u5df2\u586b\u5165\u4e0a\u62a5\u8868\u5355", icon: "success" });
-  },
-
-  copyPestRecognition() {
-    const result = this.data.pestRecognition || {};
-    const text = [result.category, result.name, result.severity, result.description || result.reason]
-      .filter(Boolean)
-      .join("\n");
-    if (!text) {
-      wx.showToast({ title: "\u6ca1\u6709\u53ef\u590d\u5236\u7684\u8bc6\u522b\u7ed3\u679c", icon: "none" });
-      return;
-    }
-    wx.setClipboardData({ data: text, success: () => wx.showToast({ title: "\u5df2\u590d\u5236\u8bc6\u522b\u7ed3\u679c", icon: "success" }) });
-  },
 
   async setReportStatus(event) {
     const user = authService.getCachedUser();
@@ -546,7 +429,6 @@ Page({
         image: fileID,
         images: [fileID],
         title: `${form.type}：${form.location.trim()}`,
-        recognition: this.data.pestRecognition.visible ? this.data.pestRecognition : {},
         latitude: form.latitude,
         longitude: form.longitude,
         accuracy: form.accuracy,
@@ -558,7 +440,6 @@ Page({
       this.setData({
         showForm: false,
         form: emptyForm(),
-        pestRecognition: emptyRecognition(),
         locating: false,
         locationHint: "",
       });
