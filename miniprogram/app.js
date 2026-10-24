@@ -1,6 +1,6 @@
 const treeService = require("./services/treeService");
 
-const CLOUD_ENV_ID = "cloudbase-d2gy960gude91a011";
+const CLOUD_ENV_ID = "d2gy960gude91a011";
 
 App({
   globalData: {
